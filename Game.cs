@@ -22,22 +22,32 @@ public partial class Game : Node2D
         var scene = GetTree().CurrentScene;
         var brickResource = GD.Load<PackedScene>("res://brick.tscn");
 
-        var brickCount = 3;
-        var brickStartX = fieldArea.rectangleShape.Size.X * 0.25f;
-        var brickStartY = fieldArea.rectangleShape.Size.Y * 0.25f;
-        var brickDistanceX = 40f;
-        for (int i = 0; i < brickCount; ++i)
+        var brickCountX = 10;
+        var brickCountY = 4;
+        var brickStartX = fieldArea.rectangleShape.Size.X * 0.1f;
+        var brickStartY = fieldArea.rectangleShape.Size.Y * 0.05f;
+        var brickDistanceX = 0f;
+        var brickDistanceY = 0f;
+        for (int i = 0; i < brickCountY; ++i)
         {
-            var brick = (Brick)brickResource.Instantiate();
-            scene.CallDeferred("add_child", brick);
-            bricks.Add(brick);
-            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-            brick.brickId = $"brick-{i}";
-            var brickPosition = new Vector2(
-                brickStartX + i * brickDistanceX + i * brick.rectangleShape.Size.X,
-                brickStartY
-            );
-            brick.GlobalPosition = brickPosition;
+            for (int j = 0; j < brickCountX; ++j)
+            {
+                var brick = (Brick)brickResource.Instantiate();
+                scene.CallDeferred("add_child", brick);
+                bricks.Add(brick);
+                await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
+                brick.brickId = $"brick-({j},[i])";
+                var brickSize = new Vector2(
+                    brick.rectangleShape.Size.X,
+                    brick.rectangleShape.Size.Y
+                );
+                var brickPosition = new Vector2(
+                    brickStartX + j * brickDistanceX + j * brickSize.X,
+                    brickStartY + i * brickDistanceY + i * brickSize.Y
+                );
+                brick.GlobalPosition = brickPosition;
+            }
         }
 
         paddle.GlobalPosition = new Vector2(
