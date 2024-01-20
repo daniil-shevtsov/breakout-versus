@@ -28,18 +28,18 @@ public partial class Game : Node2D
 
     public override void _PhysicsProcess(double delta)
     {
-        var direction = Vector3.Zero;
-        if (Input.IsActionPressed("paddle_right"))
-        {
-            direction.X += 1.0f;
-        }
+        var paddleDirection = 0f;
         if (Input.IsActionPressed("paddle_left"))
         {
-            direction.X -= 1.0f;
+            paddleDirection = -1.0f;
+        }
+        else if (Input.IsActionPressed("paddle_right"))
+        {
+            paddleDirection = 1.0f;
         }
 
         var currentPosition = paddle.GlobalPosition;
-        var movement = new Vector2((float)(direction.X * paddleSpeed * delta), 0f);
+        var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
         var newPosition = currentPosition + movement;
         paddle.GlobalPosition = newPosition;
     }
