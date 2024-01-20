@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cpfh8yk42nsnr"]
+[gd_scene load_steps=6 format=3 uid="uid://cpfh8yk42nsnr"]
 
 [ext_resource type="Script" path="res://Game.cs" id="1_fy6tg"]
 [ext_resource type="PackedScene" uid="uid://ceef1exm7fxc4" path="res://paddle.tscn" id="2_0m1yw"]
+[ext_resource type="Script" path="res://FieldArea.cs" id="2_pwf8s"]
 [ext_resource type="Script" path="res://Paddle.cs" id="3_evw1l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6tscc"]
@@ -11,6 +12,7 @@ size = Vector2(1147, 654)
 script = ExtResource("1_fy6tg")
 
 [node name="FieldArea" type="Area2D" parent="."]
+script = ExtResource("2_pwf8s")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FieldArea"]
 position = Vector2(573.5, 327)
