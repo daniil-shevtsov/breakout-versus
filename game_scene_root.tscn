@@ -1,12 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://cpfh8yk42nsnr"]
+[gd_scene load_steps=4 format=3 uid="uid://cpfh8yk42nsnr"]
+
+[ext_resource type="Script" path="res://Game.cs" id="1_fy6tg"]
+[ext_resource type="PackedScene" uid="uid://ceef1exm7fxc4" path="res://paddle.tscn" id="2_0m1yw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6tscc"]
 size = Vector2(1147, 654)
 
 [node name="GameSceneRoot" type="Node2D"]
+script = ExtResource("1_fy6tg")
 
 [node name="FieldArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FieldArea"]
 position = Vector2(573.5, 327)
 shape = SubResource("RectangleShape2D_6tscc")
+
+[node name="Paddle" parent="." instance=ExtResource("2_0m1yw")]
