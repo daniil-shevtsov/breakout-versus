@@ -3,7 +3,7 @@ using System;
 
 public partial class Paddle : StaticBody2D
 {
-    CollisionShape2D collisionShape = null;
+    public CollisionShape2D collisionShape = null;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
