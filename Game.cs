@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public partial class Game : Node2D
 {
     float paddleSpeed = 300f;
-    float ballSpeed = 150f;
+    float ballSpeed = 300;
     public List<Brick> bricks = new List<Brick>();
 
     private bool isBallStickedToPaddle = true;
@@ -93,7 +93,7 @@ public partial class Game : Node2D
         {
             paddleDirection = 1.0f;
         }
-        if (Input.IsActionPressed("paddle_shoot_ball"))
+        if (Input.IsActionPressed("paddle_shoot_ball") && isBallStickedToPaddle)
         {
             isBallStickedToPaddle = false;
             var minAngle = -120;
