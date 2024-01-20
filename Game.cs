@@ -96,7 +96,11 @@ public partial class Game : Node2D
         if (Input.IsActionPressed("paddle_shoot_ball"))
         {
             isBallStickedToPaddle = false;
-            ballVelocity = new Vector2(0f, -1f);
+            var minAngle = -120;
+            var maxAngle = -45;
+            var randomAngle = new Random().NextDouble() * (maxAngle - minAngle) + minAngle;
+            var angle = Mathf.DegToRad(randomAngle);
+            ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
         }
 
         var currentPosition = paddle.GlobalPosition;
