@@ -22,12 +22,23 @@ public partial class Game : Node2D
         var scene = GetTree().CurrentScene;
         var brickResource = GD.Load<PackedScene>("res://brick.tscn");
 
-        var brickCountX = 10;
+        var dummyBrick = (Brick)brickResource.Instantiate();
+        scene.CallDeferred("add_child", dummyBrick);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
+        var brickDistanceX = 4f;
+        var brickDistanceY = 4f;
+        int bricksToFitInRow = (int)
+            Math.Floor(
+                fieldArea.rectangleShape.Size.X
+                    / (brickDistanceX + dummyBrick.rectangleShape.Size.X)
+            );
+
+        var brickCountX = bricksToFitInRow;
         var brickCountY = 4;
-        var brickStartX = fieldArea.rectangleShape.Size.X * 0.1f;
+        var brickStartX = 0f;
         var brickStartY = fieldArea.rectangleShape.Size.Y * 0.05f;
-        var brickDistanceX = 0f;
-        var brickDistanceY = 0f;
+
         for (int i = 0; i < brickCountY; ++i)
         {
             for (int j = 0; j < brickCountX; ++j)
@@ -42,11 +53,15 @@ public partial class Game : Node2D
                     brick.rectangleShape.Size.X,
                     brick.rectangleShape.Size.Y
                 );
-                var brickPosition = new Vector2(
+                var brickPositionTopLeft = new Vector2(
                     brickStartX + j * brickDistanceX + j * brickSize.X,
                     brickStartY + i * brickDistanceY + i * brickSize.Y
                 );
-                brick.GlobalPosition = brickPosition;
+                var brickPositionCenter = new Vector2(
+                    brickPositionTopLeft.X + brickSize.X / 2f,
+                    brickPositionTopLeft.Y + brickSize.Y / 2f
+                );
+                brick.GlobalPosition = brickPositionCenter;
             }
         }
 
