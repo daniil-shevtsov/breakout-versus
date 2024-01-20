@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhmut3ho4db45"]
+
+[ext_resource type="Script" path="res://Brick.cs" id="1_y7p8g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c2vy0"]
+size = Vector2(51.5556, 20)
+
+[node name="Brick" type="StaticBody2D"]
+script = ExtResource("1_y7p8g")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -29.0
+offset_top = -10.0
+offset_right = 37.0
+offset_bottom = 11.0
+scale = Vector2(0.874503, 0.939658)
+color = Color(1, 0.6, 0.231373, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1.11874, 1)
+shape = SubResource("RectangleShape2D_c2vy0")
