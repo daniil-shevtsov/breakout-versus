@@ -14,11 +14,14 @@ public partial class Ball : StaticBody2D
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) { }
+    public override void _Process(double delta)
+    {
+        this.QueueRedraw();
+    }
 
     public override void _Draw()
     {
-        var center = collisionShape.GlobalPosition;
+        var center = collisionShape.Position;
         float radius = shape.Radius;
         var color = new Color(1, 1, 1);
         DrawCircle(center, radius, color);

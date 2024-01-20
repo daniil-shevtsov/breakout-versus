@@ -8,12 +8,14 @@ public partial class Game : Node2D
     public List<Brick> bricks = new List<Brick>();
 
     Paddle paddle = null;
+    Ball ball = null;
     FieldArea fieldArea = null;
 
     // Called when the node enters the scene tree for the first time.
     public override async void _Ready()
     {
         paddle = GetNode<Paddle>("Paddle");
+        ball = GetNode<Ball>("Ball");
         fieldArea = GetNode<FieldArea>("FieldArea");
 
         GD.Print(paddle);
@@ -69,6 +71,8 @@ public partial class Game : Node2D
             fieldArea.rectangleShape.Size.X / 2f,
             fieldArea.rectangleShape.Size.Y * 0.9f
         );
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        ball.GlobalPosition = new Vector2(paddle.GlobalPosition.X, paddle.GlobalPosition.Y - 100f);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

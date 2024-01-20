@@ -25,7 +25,8 @@ position = Vector2(576, 323.5)
 shape = SubResource("RectangleShape2D_6tscc")
 
 [node name="Paddle" parent="." instance=ExtResource("2_0m1yw")]
+position = Vector2(0, -142)
 script = ExtResource("3_evw1l")
 
 [node name="Ball" parent="." instance=ExtResource("5_fufeb")]
-scale = Vector2(0.991703, 1)
+position = Vector2(311, -147)
