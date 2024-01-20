@@ -25,19 +25,23 @@ public partial class Game : Node2D
         var dummyBrick = (Brick)brickResource.Instantiate();
         scene.CallDeferred("add_child", dummyBrick);
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        var brickSize = dummyBrick.rectangleShape.Size;
+        scene.CallDeferred("remove_child", dummyBrick);
+        var fieldSize = fieldArea.rectangleShape.Size;
 
         var brickDistanceX = 4f;
         var brickDistanceY = 4f;
-        int bricksToFitInRow = (int)
-            Math.Floor(
-                fieldArea.rectangleShape.Size.X
-                    / (brickDistanceX + dummyBrick.rectangleShape.Size.X)
-            );
+        int bricksToFitInRow = (int)Math.Floor(fieldSize.X / (brickDistanceX + brickSize.X));
 
         var brickCountX = bricksToFitInRow;
         var brickCountY = 4;
-        var brickStartX = 0f;
-        var brickStartY = fieldArea.rectangleShape.Size.Y * 0.05f;
+
+        var brickRowWidth =
+            bricksToFitInRow * brickSize.X + (bricksToFitInRow - 1) * brickDistanceX;
+        var extraSpace = fieldSize.X - brickRowWidth;
+
+        var brickStartX = extraSpace / 2;
+        var brickStartY = brickStartX;
 
         for (int i = 0; i < brickCountY; ++i)
         {
@@ -49,10 +53,6 @@ public partial class Game : Node2D
                 await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
                 brick.brickId = $"brick-({j},[i])";
-                var brickSize = new Vector2(
-                    brick.rectangleShape.Size.X,
-                    brick.rectangleShape.Size.Y
-                );
                 var brickPositionTopLeft = new Vector2(
                     brickStartX + j * brickDistanceX + j * brickSize.X,
                     brickStartY + i * brickDistanceY + i * brickSize.Y
