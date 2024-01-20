@@ -7,6 +7,8 @@ public partial class Game : Node2D
     float paddleSpeed = 300f;
     public List<Brick> bricks = new List<Brick>();
 
+    private bool isBallStickedToPaddle = true;
+
     Paddle paddle = null;
     Ball ball = null;
     FieldArea fieldArea = null;
@@ -72,7 +74,7 @@ public partial class Game : Node2D
             fieldArea.rectangleShape.Size.Y * 0.9f
         );
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-        ball.GlobalPosition = new Vector2(paddle.GlobalPosition.X, paddle.GlobalPosition.Y - 100f);
+        ball.GlobalPosition = new Vector2(paddle.GlobalPosition.X, paddle.GlobalPosition.Y - 50f);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -94,5 +96,13 @@ public partial class Game : Node2D
         var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
         var newPosition = currentPosition + movement;
         paddle.GlobalPosition = newPosition;
+
+        if (isBallStickedToPaddle)
+        {
+            ball.GlobalPosition = new Vector2(
+                paddle.GlobalPosition.X,
+                paddle.GlobalPosition.Y - 50f
+            );
+        }
     }
 }
