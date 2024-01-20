@@ -99,6 +99,7 @@ public partial class Game : Node2D
             var minAngle = -120;
             var maxAngle = -45;
             var randomAngle = new Random().NextDouble() * (maxAngle - minAngle) + minAngle;
+            GD.Print($"generated angle {randomAngle}");
             var angle = Mathf.DegToRad(randomAngle);
             ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
         }
