@@ -5,9 +5,11 @@ using System.Collections.Generic;
 public partial class Game : Node2D
 {
     float paddleSpeed = 300f;
+    float ballSpeed = 150f;
     public List<Brick> bricks = new List<Brick>();
 
     private bool isBallStickedToPaddle = true;
+    private Vector2 ballVelocity = Vector2.Zero;
 
     Paddle paddle = null;
     Ball ball = null;
@@ -91,6 +93,11 @@ public partial class Game : Node2D
         {
             paddleDirection = 1.0f;
         }
+        if (Input.IsActionPressed("paddle_shoot_ball"))
+        {
+            isBallStickedToPaddle = false;
+            ballVelocity = new Vector2(0f, -1f);
+        }
 
         var currentPosition = paddle.GlobalPosition;
         var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
@@ -103,6 +110,14 @@ public partial class Game : Node2D
                 paddle.GlobalPosition.X,
                 paddle.GlobalPosition.Y - 50f
             );
+        }
+        else
+        {
+            var ballMovement = new Vector2(
+                (float)(ballVelocity.X * ballSpeed * delta),
+                (float)(ballVelocity.Y * ballSpeed * delta)
+            );
+            ball.GlobalPosition = ball.GlobalPosition + ballMovement;
         }
     }
 }
