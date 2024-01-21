@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public partial class Game : Node2D
 {
     float paddleSpeed = 300f;
-    float ballSpeed = 300;
+    float ballSpeed = 600;
     public List<Brick> bricks = new List<Brick>();
 
     private bool isBallStickedToPaddle = true;
@@ -56,7 +56,6 @@ public partial class Game : Node2D
                 var brick = (Brick)brickResource.Instantiate();
                 scene.CallDeferred("add_child", brick);
                 bricks.Add(brick);
-                await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
                 brick.brickId = $"brick-({j},[i])";
                 var brickPositionTopLeft = new Vector2(
@@ -122,16 +121,34 @@ public partial class Game : Node2D
                 (float)(ballVelocity.X * ballSpeed * delta),
                 (float)(ballVelocity.Y * ballSpeed * delta)
             );
-            ball.GlobalPosition = ball.GlobalPosition + ballMovement;
+            var newBallPosition = ball.GlobalPosition + ballMovement;
 
-            if (ball.GlobalPosition.Y <= 0f)
+            if (newBallPosition.Y - ball.shape.Radius / 2 <= 0f)
             {
                 ballVelocity = -ballVelocity;
             }
-            else if (ball.GlobalPosition.Y >= paddle.GlobalPosition.Y)
+            else if (
+                newBallPosition.Y + ball.shape.Radius / 2
+                >= paddle.GlobalPosition.Y - paddle.shape.Size.Y / 2
+            )
             {
                 ballVelocity = -ballVelocity;
+                ballMovement = -ballMovement;
+                newBallPosition = ball.GlobalPosition + ballMovement;
+                // newBallPosition = new Vector2(
+                //     newBallPosition.X,
+                //     paddle.GlobalPosition.Y - paddle.shape.Size.Y - ball.shape.Radius / 2
+                // );
             }
+
+            ball.GlobalPosition = newBallPosition;
+
+            // //TODO: This can be done much smarter
+            // var ballMovement2 = new Vector2(
+            //     (float)(ballVelocity.X * ballSpeed * delta),
+            //     (float)(ballVelocity.Y * ballSpeed * delta)
+            // );
+            // ball.GlobalPosition = ball.GlobalPosition + ballMovement2;
         }
     }
 }
