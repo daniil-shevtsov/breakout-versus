@@ -10,6 +10,7 @@
 size = Vector2(1152, 647)
 
 [node name="GameSceneRoot" type="Node2D"]
+position = Vector2(0, -8)
 script = ExtResource("1_fy6tg")
 
 [node name="FieldArea" type="Area2D" parent="."]

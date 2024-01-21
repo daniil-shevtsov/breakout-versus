@@ -123,6 +123,15 @@ public partial class Game : Node2D
                 (float)(ballVelocity.Y * ballSpeed * delta)
             );
             ball.GlobalPosition = ball.GlobalPosition + ballMovement;
+
+            if (ball.GlobalPosition.Y <= 0f)
+            {
+                ballVelocity = -ballVelocity;
+            }
+            else if (ball.GlobalPosition.Y >= paddle.GlobalPosition.Y)
+            {
+                ballVelocity = -ballVelocity;
+            }
         }
     }
 }
