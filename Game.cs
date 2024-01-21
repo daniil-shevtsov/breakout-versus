@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using static MyExtensions;
 
 public partial class Game : Node2D
 {
@@ -124,39 +125,30 @@ public partial class Game : Node2D
             var newBallPosition = ball.GlobalPosition + ballMovement;
 
             var collidedWithPaddle =
-                (
-                    newBallPosition.X - ball.shape.Radius / 2
-                    >= paddle.GlobalPosition.X - paddle.shape.Size.X / 2
-                )
-                && (
-                    newBallPosition.X + ball.shape.Radius / 2
-                    <= paddle.GlobalPosition.X + paddle.shape.Size.X / 2
-                )
-                && (
-                    newBallPosition.Y + ball.shape.Radius / 2
-                    >= paddle.GlobalPosition.Y - paddle.shape.Size.Y / 2
-                );
+                (ball.shape.Left(newBallPosition) >= paddle.shape.Left(paddle.GlobalPosition))
+                && (ball.shape.Right(newBallPosition) <= paddle.shape.Right(paddle.GlobalPosition))
+                && (ball.shape.Top(newBallPosition) >= paddle.shape.Top(paddle.GlobalPosition));
 
             if (
-                newBallPosition.Y + ball.shape.Radius / 2
+                ball.shape.Bottom(newBallPosition)
                 >= fieldArea.GlobalPosition.Y + fieldArea.rectangleShape.Size.Y
             )
             {
                 isBallStickedToPaddle = true;
             }
             else if (
-                (newBallPosition.Y - ball.shape.Radius / 2 <= fieldArea.GlobalPosition.Y)
+                (ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y)
                 || collidedWithPaddle
             )
             {
                 ballVelocity.Y = -ballVelocity.Y;
             }
-            if (newBallPosition.X - ball.shape.Radius / 2 <= fieldArea.GlobalPosition.X)
+            if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)
             {
                 ballVelocity.X = -ballVelocity.X;
             }
             else if (
-                newBallPosition.X + ball.shape.Radius / 2
+                ball.shape.Right(newBallPosition)
                 >= fieldArea.GlobalPosition.X + fieldArea.rectangleShape.Size.X
             )
             {
