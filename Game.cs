@@ -136,13 +136,32 @@ public partial class Game : Node2D
             {
                 isBallStickedToPaddle = true;
             }
-            else if (
-                (ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y)
-                || collidedWithPaddle
-            )
+            else if (ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y)
             {
                 ballVelocity.Y = -ballVelocity.Y;
             }
+            else if (collidedWithPaddle)
+            {
+                //TODO: In reality need to use the angle of collision
+                var zoneWidth = paddle.shape.Size.X * 0.33;
+                if (
+                    ball.shape.Right(newBallPosition)
+                    <= paddle.shape.Left(paddle.GlobalPosition) + zoneWidth
+                )
+                {
+                    ballVelocity.X -= ballSpeed * 0.25f;
+                }
+                else if (
+                    ball.shape.Left(newBallPosition)
+                    >= paddle.shape.Right(paddle.GlobalPosition) - zoneWidth
+                )
+                {
+                    ballVelocity.X += ballSpeed * 0.25f;
+                }
+                else { }
+                ballVelocity.Y = -ballVelocity.Y;
+            }
+
             if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)
             {
                 ballVelocity.X = -ballVelocity.X;
@@ -156,13 +175,6 @@ public partial class Game : Node2D
             }
 
             ball.GlobalPosition = newBallPosition;
-
-            // //TODO: This can be done much smarter
-            // var ballMovement2 = new Vector2(
-            //     (float)(ballVelocity.X * ballSpeed * delta),
-            //     (float)(ballVelocity.Y * ballSpeed * delta)
-            // );
-            // ball.GlobalPosition = ball.GlobalPosition + ballMovement2;
         }
     }
 }
