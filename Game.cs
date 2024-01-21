@@ -123,22 +123,27 @@ public partial class Game : Node2D
             );
             var newBallPosition = ball.GlobalPosition + ballMovement;
 
-            if (newBallPosition.Y - ball.shape.Radius / 2 <= 0f)
+            if (newBallPosition.Y - ball.shape.Radius / 2 <= fieldArea.GlobalPosition.Y)
             {
-                ballVelocity = -ballVelocity;
+                ballVelocity.Y = -ballVelocity.Y;
             }
             else if (
                 newBallPosition.Y + ball.shape.Radius / 2
                 >= paddle.GlobalPosition.Y - paddle.shape.Size.Y / 2
             )
             {
-                ballVelocity = -ballVelocity;
-                ballMovement = -ballMovement;
-                newBallPosition = ball.GlobalPosition + ballMovement;
-                // newBallPosition = new Vector2(
-                //     newBallPosition.X,
-                //     paddle.GlobalPosition.Y - paddle.shape.Size.Y - ball.shape.Radius / 2
-                // );
+                ballVelocity.Y = -ballVelocity.Y;
+            }
+            if (newBallPosition.X - ball.shape.Radius / 2 <= fieldArea.GlobalPosition.X)
+            {
+                ballVelocity.X = -ballVelocity.X;
+            }
+            else if (
+                newBallPosition.X + ball.shape.Radius / 2
+                >= fieldArea.GlobalPosition.X + fieldArea.rectangleShape.Size.X
+            )
+            {
+                ballVelocity.X = -ballVelocity.X;
             }
 
             ball.GlobalPosition = newBallPosition;
