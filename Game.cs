@@ -129,10 +129,10 @@ public partial class Game : Node2D
             }
             else if (
                 newBallPosition.Y + ball.shape.Radius / 2
-                >= paddle.GlobalPosition.Y - paddle.shape.Size.Y / 2
+                >= fieldArea.GlobalPosition.Y + fieldArea.rectangleShape.Size.Y
             )
             {
-                ballVelocity.Y = -ballVelocity.Y;
+                isBallStickedToPaddle = true;
             }
             if (newBallPosition.X - ball.shape.Radius / 2 <= fieldArea.GlobalPosition.X)
             {
