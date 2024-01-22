@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 project/assembly_name="BreakoutVersus"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
+
 [input]
 
 paddle_left={
