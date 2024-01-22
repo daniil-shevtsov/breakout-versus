@@ -23,6 +23,12 @@ public partial class Game : Node2D
         ball = GetNode<Ball>("Ball");
         fieldArea = GetNode<FieldArea>("FieldArea");
 
+        // var gameConfig = new GameConfig(new Vector2(1920, 1080));
+        // InitGame(gameConfig);
+        // await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        // var gameConfig2 = new GameConfig(new Vector2(800f, 600f));
+        // InitGame(gameConfig2);
+        // await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         var gameConfig = new GameConfig(new Vector2(800f, 600f));
         InitGame(gameConfig);
     }
@@ -31,7 +37,7 @@ public partial class Game : Node2D
     {
         fieldArea.rectangleShape.Size = gameConfig.fieldSize;
         fieldArea.colorRect.Size = gameConfig.fieldSize;
-
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         var scene = GetTree().CurrentScene;
         var brickResource = GD.Load<PackedScene>("res://brick.tscn");
 
@@ -121,6 +127,7 @@ public partial class Game : Node2D
                 paddle.GlobalPosition.X,
                 paddle.GlobalPosition.Y - 50f
             );
+            GD.Print($"paddle = {paddle.GlobalPosition} ball = {ball.GlobalPosition}");
         }
         else
         {
