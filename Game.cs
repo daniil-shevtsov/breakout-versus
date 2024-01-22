@@ -12,9 +12,9 @@ public partial class Game : Node2D
     private bool isBallStickedToPaddle = true;
     private Vector2 ballVelocity = Vector2.Zero;
 
-    Paddle paddle = null;
-    Ball ball = null;
-    FieldArea fieldArea = null;
+    public Paddle paddle = null;
+    public Ball ball = null;
+    public FieldArea fieldArea = null;
 
     // Called when the node enters the scene tree for the first time.
     public override async void _Ready()
@@ -23,8 +23,14 @@ public partial class Game : Node2D
         ball = GetNode<Ball>("Ball");
         fieldArea = GetNode<FieldArea>("FieldArea");
 
-        GD.Print(paddle);
-        GD.Print(fieldArea);
+        var gameConfig = new GameConfig(new Vector2(800f, 600f));
+        InitGame(gameConfig);
+    }
+
+    public async void InitGame(GameConfig gameConfig)
+    {
+        fieldArea.rectangleShape.Size = gameConfig.fieldSize;
+        fieldArea.colorRect.Size = gameConfig.fieldSize;
 
         var scene = GetTree().CurrentScene;
         var brickResource = GD.Load<PackedScene>("res://brick.tscn");

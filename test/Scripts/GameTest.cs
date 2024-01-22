@@ -18,4 +18,15 @@ public partial class GameTest
 
         AssertObject(game).IsNotNull();
     }
+
+    [TestCase]
+    public async Task TestPaddleAndBallInitialPosition()
+    {
+        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
+        var game = (Game)runner.Scene();
+
+        await runner.SimulateFrames(1);
+
+        AssertObject(game.paddle.GlobalPosition).IsEqual(new Vector2(0, 0));
+    }
 }
