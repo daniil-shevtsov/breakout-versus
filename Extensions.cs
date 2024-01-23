@@ -1,4 +1,7 @@
 using Godot;
+using GdUnit4;
+using GdUnit4.Core;
+using System.Threading.Tasks;
 
 static class MyExtensions
 {
@@ -40,5 +43,10 @@ static class MyExtensions
     public static float Top(this CircleShape2D shape, Vector2 center)
     {
         return center.Y - shape.Radius / 2;
+    }
+
+    public static async Task AwaitPhysicsProcessCalls(this ISceneRunner runner, uint n)
+    {
+        await runner.AwaitMillis((1000 / 60) * n);
     }
 }

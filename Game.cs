@@ -12,6 +12,9 @@ public partial class Game : Node2D
     private bool isBallStickedToPaddle = true;
     private Vector2 ballVelocity = Vector2.Zero;
 
+    public int physicsProcessCount = 0;
+    public int processCount = 0;
+
     public Paddle paddle = null;
     public Ball ball = null;
     public FieldArea fieldArea = null;
@@ -92,10 +95,16 @@ public partial class Game : Node2D
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) { }
+    public override void _Process(double delta)
+    {
+        ++processCount;
+        GD.Print($"Process {delta}");
+    }
 
     public override void _PhysicsProcess(double delta)
     {
+        ++physicsProcessCount;
+        GD.Print($"PhysicsProcess {delta}");
         var paddleDirection = 0f;
         if (Input.IsActionPressed("paddle_left"))
         {
@@ -198,6 +207,8 @@ public partial class Game : Node2D
             if (keyEvent.Keycode == Key.Space)
             {
                 GD.Print("Shoot ball pressed");
+                //physicsProcessCount = 0;
+                //processCount = 0;
                 isBallStickedToPaddle = false;
                 var minAngle = -120;
                 var maxAngle = -45;

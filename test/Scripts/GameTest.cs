@@ -54,4 +54,21 @@ public partial class GameTest
         GD.Print($"in test ball position: {game.ball.GlobalPosition}");
         AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 480));
     }
+
+    [TestCase]
+    public async Task TestBallCollidingWithFieldTop()
+    {
+        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
+        var game = (Game)runner.Scene();
+        game.InitGame(new GameConfig(new Vector2(800, 120)));
+        await runner.SimulateFrames(3);
+
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 58));
+
+        runner.SimulateKeyPressed(Key.Space);
+
+        await runner.AwaitPhysicsProcessCalls(3);
+
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 28));
+    }
 }
