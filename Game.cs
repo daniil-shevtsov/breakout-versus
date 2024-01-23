@@ -105,18 +105,9 @@ public partial class Game : Node2D
         {
             paddleDirection = 1.0f;
         }
-        if (Input.IsActionPressed("paddle_shoot_ball") && isBallStickedToPaddle)
-        {
-            isBallStickedToPaddle = false;
-            var minAngle = -120;
-            var maxAngle = -45;
-            var randomAngle = new Random().NextDouble() * (maxAngle - minAngle) + minAngle;
-            GD.Print($"generated angle {randomAngle}");
-            var angle = Mathf.DegToRad(randomAngle);
-            ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
-        }
 
         var currentPosition = paddle.GlobalPosition;
+        var currentBallPosition = ball.GlobalPosition;
         var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
         var newPosition = currentPosition + movement;
         paddle.GlobalPosition = newPosition;
@@ -127,10 +118,10 @@ public partial class Game : Node2D
                 paddle.GlobalPosition.X,
                 paddle.GlobalPosition.Y - 50f
             );
-            GD.Print($"paddle = {paddle.GlobalPosition} ball = {ball.GlobalPosition}");
         }
         else
         {
+            GD.Print($"ball speed: {ballSpeed} delta: {delta}");
             var ballMovement = new Vector2(
                 (float)(ballVelocity.X * ballSpeed * delta),
                 (float)(ballVelocity.Y * ballSpeed * delta)
@@ -188,6 +179,34 @@ public partial class Game : Node2D
             }
 
             ball.GlobalPosition = newBallPosition;
+
+            if (currentPosition != newPosition)
+            {
+                GD.Print($"new paddle position = {paddle.GlobalPosition}");
+            }
+            if (currentBallPosition != ball.GlobalPosition)
+            {
+                GD.Print($"new ball position = {ball.GlobalPosition}");
+            }
+        }
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed)
+        {
+            if (keyEvent.Keycode == Key.Space)
+            {
+                GD.Print("Shoot ball pressed");
+                isBallStickedToPaddle = false;
+                var minAngle = -120;
+                var maxAngle = -45;
+                var randomAngle = -90; // Random().NextDouble() * (maxAngle - minAngle) + minAngle;
+
+                var angle = Mathf.DegToRad(randomAngle);
+                ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
+                GD.Print($"new ball velocity {ballVelocity}");
+            }
         }
     }
 }

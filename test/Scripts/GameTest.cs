@@ -31,8 +31,27 @@ public partial class GameTest
         await runner.SimulateFrames(1);
         game.InitGame(gameConfig);
         await runner.SimulateFrames(1);
-        //await runner.AwaitMillis(2000);
+
         AssertObject(game.paddle.GlobalPosition).IsEqual(new Vector2(400, 540));
         AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 490));
+    }
+
+    [TestCase]
+    public async Task TestPaddleShootingBallOnSpace()
+    {
+        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
+        var game = (Game)runner.Scene();
+        game.InitGame(gameConfig);
+        await runner.SimulateFrames(3);
+
+        AssertObject(game.paddle.GlobalPosition).IsEqual(new Vector2(400, 540));
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 490));
+
+        runner.SimulateKeyPressed(Key.Space);
+        GD.Print("test after key press");
+        await runner.AwaitIdleFrame();
+
+        GD.Print($"in test ball position: {game.ball.GlobalPosition}");
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 480));
     }
 }

@@ -14,9 +14,6 @@ public partial class Brick : StaticBody2D
         collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
         rectangleShape = (RectangleShape2D)collisionShape.Shape;
         colorRect = GetNode<ColorRect>("ColorRect");
-
-        GD.Print(collisionShape);
-        GD.Print(rectangleShape);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
