@@ -2,6 +2,7 @@ using Godot;
 using GdUnit4;
 using GdUnit4.Core;
 using System.Threading.Tasks;
+using System;
 
 static class MyExtensions
 {
@@ -47,6 +48,11 @@ static class MyExtensions
 
     public static async Task AwaitPhysicsProcessCalls(this ISceneRunner runner, uint n)
     {
-        await runner.AwaitMillis((1000 / 60) * n);
+        var scene = runner.Scene();
+        for (int i = 0; i < n; ++i)
+        {
+            await scene.ToSignal(scene.GetTree(), SceneTree.SignalName.PhysicsFrame);
+            await runner.AwaitMillis(1);
+        }
     }
 }
