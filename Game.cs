@@ -151,6 +151,10 @@ public partial class Game : Node2D
             }
             else if (ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y)
             {
+                newBallPosition = new Vector2(
+                    newBallPosition.X,
+                    fieldArea.GlobalPosition.Y + ball.shape.Radius / 2
+                );
                 ballVelocity.Y = -ballVelocity.Y;
             }
             else if (collidedWithPaddle)
@@ -195,7 +199,10 @@ public partial class Game : Node2D
             }
             if (currentBallPosition != ball.GlobalPosition)
             {
-                GD.Print($"new ball position = {ball.GlobalPosition}");
+                GD.Print($"new ball position = {ball.GlobalPosition} size = {ball.shape.Radius}");
+                GD.Print(
+                    $"ball top {ball.shape.Top(newBallPosition)} <=  field Y {fieldArea.GlobalPosition.Y} = {ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y}"
+                );
             }
         }
     }

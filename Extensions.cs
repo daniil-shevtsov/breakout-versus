@@ -26,6 +26,16 @@ static class MyExtensions
         return center.Y - shape.Size.Y / 2;
     }
 
+    public static float Top(this Ball ball)
+    {
+        return ball.shape.Top(ball.GlobalPosition);
+    }
+
+    public static Vector2 TopCenter(this Ball ball)
+    {
+        return new Vector2(ball.GlobalPosition.X, ball.Top());
+    }
+
     public static float Left(this CircleShape2D shape, Vector2 center)
     {
         return center.X - shape.Radius / 2;
