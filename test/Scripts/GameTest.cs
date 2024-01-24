@@ -72,4 +72,28 @@ public partial class GameTest
         await runner.AwaitPhysicsProcessCalls(1);
         AssertObject(game.ball.TopCenter()).IsEqual(new Vector2(400, 10));
     }
+
+    [TestCase]
+    public async Task TestBallCollidingWithCenterOfPaddle()
+    {
+        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
+        runner.MaximizeView();
+        var game = (Game)runner.Scene();
+        game.InitGame(new GameConfig(new Vector2(800, 120)));
+        await runner.SimulateFrames(3);
+
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 58));
+        AssertObject(game.paddle.GlobalPosition).IsEqual(new Vector2(400, 108));
+
+        runner.SimulateKeyPressed(Key.Space);
+
+        await runner.AwaitPhysicsProcessCalls(6);
+
+        AssertObject(game.ball.TopCenter()).IsEqual(new Vector2(400, 0));
+        AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 10));
+        await runner.AwaitPhysicsProcessCalls(11);
+        AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 93));
+        await runner.AwaitPhysicsProcessCalls(1);
+        AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 83));
+    }
 }

@@ -175,8 +175,14 @@ public partial class Game : Node2D
                 {
                     ballVelocity.X += ballSpeed * 0.25f;
                 }
-                else { }
-                ballVelocity.Y = -ballVelocity.Y;
+                else
+                {
+                    ballVelocity.Y = -ballVelocity.Y;
+                    newBallPosition = new Vector2(
+                        newBallPosition.X,
+                        paddle.shape.Top(paddle.GlobalPosition)
+                    );
+                }
             }
 
             if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)

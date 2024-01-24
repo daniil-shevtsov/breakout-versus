@@ -31,9 +31,19 @@ static class MyExtensions
         return ball.shape.Top(ball.GlobalPosition);
     }
 
+    public static float Bottom(this Ball ball)
+    {
+        return ball.shape.Bottom(ball.GlobalPosition);
+    }
+
     public static Vector2 TopCenter(this Ball ball)
     {
         return new Vector2(ball.GlobalPosition.X, ball.Top());
+    }
+
+    public static Vector2 BottomCenter(this Ball ball)
+    {
+        return new Vector2(ball.GlobalPosition.X, ball.Bottom());
     }
 
     public static float Left(this CircleShape2D shape, Vector2 center)
