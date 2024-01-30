@@ -10,6 +10,7 @@ public partial class Game : Node2D
     public List<Brick> bricks = new List<Brick>();
 
     private bool isBallStickedToPaddle = true;
+    public bool isPaused = false;
     private Vector2 ballVelocity = Vector2.Zero;
 
     public int physicsProcessCount = 0;
@@ -102,7 +103,7 @@ public partial class Game : Node2D
         {
             paddle.GlobalPosition = (Vector2)gameConfig.paddlePosition;
         }
-        GD.Print($"paddle size: {paddle.shape.Size}");
+        GD.Print($"paddle size: {paddle.shape.Size} ball radius: {ball.shape.Radius}");
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -116,133 +117,152 @@ public partial class Game : Node2D
     {
         ++physicsProcessCount;
         GD.Print($"PhysicsProcess {delta}");
-        var paddleDirection = 0f;
-        if (Input.IsActionPressed("paddle_left"))
+        if (!isPaused)
         {
-            paddleDirection = -1.0f;
-        }
-        else if (Input.IsActionPressed("paddle_right"))
-        {
-            paddleDirection = 1.0f;
-        }
-
-        var currentPosition = paddle.GlobalPosition;
-        var currentBallPosition = ball.GlobalPosition;
-        var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
-        var newPosition = currentPosition + movement;
-        paddle.GlobalPosition = newPosition;
-
-        if (isBallStickedToPaddle)
-        {
-            ball.GlobalPosition = new Vector2(
-                paddle.GlobalPosition.X,
-                paddle.GlobalPosition.Y - 50f
-            );
-        }
-        else
-        {
-            GD.Print($"ball speed: {ballSpeed} delta: {delta}");
-            var ballMovement = new Vector2(
-                (float)(ballVelocity.X * ballSpeed * delta),
-                (float)(ballVelocity.Y * ballSpeed * delta)
-            );
-            var newBallPosition = ball.GlobalPosition + ballMovement;
-
-            var oldCollidedWithPaddle =
-                (ball.shape.Left(newBallPosition) >= paddle.shape.Left(paddle.GlobalPosition))
-                && (ball.shape.Right(newBallPosition) <= paddle.shape.Right(paddle.GlobalPosition))
-                && (ball.shape.Top(newBallPosition) >= paddle.shape.Top(paddle.GlobalPosition));
-            var newCollidedWithPaddle =
-                ball.shape.Left(newBallPosition) >= paddle.Left()
-                && ball.shape.Left(newBallPosition) <= paddle.Right()
-                && ball.shape.Bottom(newBallPosition) > paddle.Top();
-
-            var collidedWithPaddle = oldCollidedWithPaddle; //|| newCollidedWithPaddle;
-
-            if (
-                ball.shape.Bottom(newBallPosition)
-                >= fieldArea.GlobalPosition.Y + fieldArea.rectangleShape.Size.Y
-            )
+            var paddleDirection = 0f;
+            if (Input.IsActionPressed("paddle_left"))
             {
-                isBallStickedToPaddle = true;
+                paddleDirection = -1.0f;
             }
-            else if (ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y)
+            else if (Input.IsActionPressed("paddle_right"))
             {
-                newBallPosition = new Vector2(
-                    newBallPosition.X,
-                    fieldArea.GlobalPosition.Y + ball.shape.Radius / 2
+                paddleDirection = 1.0f;
+            }
+
+            var currentPosition = paddle.GlobalPosition;
+            var currentBallPosition = ball.GlobalPosition;
+            var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
+            var newPosition = currentPosition + movement;
+            paddle.GlobalPosition = newPosition;
+
+            if (isBallStickedToPaddle)
+            {
+                ball.GlobalPosition = new Vector2(
+                    paddle.GlobalPosition.X,
+                    paddle.GlobalPosition.Y - 50f
                 );
-                ballVelocity.Y = -ballVelocity.Y;
             }
-            else if (newCollidedWithPaddle)
+            else
             {
-                GD.Print("KEK collided with paddle");
-                //TODO: In reality need to use the angle of collision
-                var zoneWidth = paddle.shape.Size.X * 0.33;
+                GD.Print($"ball speed: {ballSpeed} delta: {delta}");
+                var ballMovement = new Vector2(
+                    (float)(ballVelocity.X * ballSpeed * delta),
+                    (float)(ballVelocity.Y * ballSpeed * delta)
+                );
+                var newBallPosition = ball.GlobalPosition + ballMovement;
+
+                var oldCollidedWithPaddle =
+                    (ball.shape.Left(newBallPosition) >= paddle.shape.Left(paddle.GlobalPosition))
+                    && (
+                        ball.shape.Right(newBallPosition)
+                        <= paddle.shape.Right(paddle.GlobalPosition)
+                    )
+                    && (ball.shape.Top(newBallPosition) >= paddle.shape.Top(paddle.GlobalPosition));
+                var newCollidedWithPaddle =
+                    ball.shape.Left(newBallPosition) >= paddle.Left()
+                    && ball.shape.Left(newBallPosition) <= paddle.Right()
+                    && ball.shape.Bottom(newBallPosition) > paddle.Top();
+
+                var collidedWithPaddle = oldCollidedWithPaddle; //|| newCollidedWithPaddle;
+
                 if (
-                    ball.shape.Right(newBallPosition)
-                    <= paddle.shape.Left(paddle.GlobalPosition) + zoneWidth
+                    ball.shape.Bottom(newBallPosition)
+                    >= fieldArea.GlobalPosition.Y + fieldArea.rectangleShape.Size.Y
                 )
                 {
-                    GD.Print("KEK collided with left paddle zone");
+                    isBallStickedToPaddle = true;
+                }
+                else if (ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y)
+                {
+                    newBallPosition = new Vector2(
+                        newBallPosition.X,
+                        fieldArea.GlobalPosition.Y + ball.shape.Radius / 2
+                    );
                     ballVelocity.Y = -ballVelocity.Y;
-                    //ballVelocity.X -= ballSpeed * 0.25f;
+                }
+                else if (newCollidedWithPaddle)
+                {
+                    GD.Print("KEK collided with paddle");
+                    //TODO: In reality need to use the angle of collision
+                    var zoneWidth = paddle.shape.Size.X * 0.33;
+                    if (
+                        ball.shape.Right(newBallPosition)
+                        <= paddle.shape.Left(paddle.GlobalPosition) + zoneWidth
+                    )
+                    {
+                        GD.Print("KEK collided with left paddle zone");
+                        ballVelocity.Y = -ballVelocity.Y;
+                        //ballVelocity.X -= ballSpeed * 0.25f;
+                    }
+                    else if (
+                        ball.shape.Left(newBallPosition)
+                        >= paddle.shape.Right(paddle.GlobalPosition) - zoneWidth
+                    )
+                    {
+                        GD.Print("KEK collided with right paddle zone");
+                        var randomAngle = -90;
+
+                        var angle = Mathf.DegToRad(randomAngle);
+                        ballVelocity = new Vector2(
+                            (float)Mathf.Cos(angle),
+                            (float)Mathf.Sin(angle)
+                        );
+                        newBallPosition = new Vector2(
+                            newBallPosition.X,
+                            paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius / 2f
+                        );
+                        GD.Print($"KEK New ball velocity = {ballVelocity}");
+                        GD.Print(
+                            $"KEK paddle top {paddle.Top()} ball position = {ball.GlobalPosition} ball bottom = {ball.Bottom()}"
+                        );
+                    }
+                    else
+                    {
+                        GD.Print("KEK collided with middle paddle zone");
+                        var newAngle = -90;
+
+                        var angle = Mathf.DegToRad(newAngle);
+                        ballVelocity = new Vector2(
+                            (float)Mathf.Cos(angle),
+                            (float)Mathf.Sin(angle)
+                        );
+                        newBallPosition = new Vector2(
+                            newBallPosition.X,
+                            paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius
+                        );
+                        GD.Print($"KEK New ball velocity = {ballVelocity}");
+                        GD.Print(
+                            $"KEK paddle top {paddle.Top()} ball position = {ball.GlobalPosition} ball bottom = {ball.Bottom()}"
+                        );
+                    }
+                }
+
+                if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)
+                {
+                    ballVelocity.X = -ballVelocity.X;
                 }
                 else if (
-                    ball.shape.Left(newBallPosition)
-                    >= paddle.shape.Right(paddle.GlobalPosition) - zoneWidth
+                    ball.shape.Right(newBallPosition)
+                    >= fieldArea.GlobalPosition.X + fieldArea.rectangleShape.Size.X
                 )
                 {
-                    GD.Print("KEK collided with right paddle zone");
-                    var randomAngle = -90;
-
-                    var angle = Mathf.DegToRad(randomAngle);
-                    ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
-                    newBallPosition = new Vector2(
-                        newBallPosition.X,
-                        paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius / 2f
-                    );
-                    GD.Print($"KEK New ball velocity = {ballVelocity}");
-                    GD.Print(
-                        $"KEK paddle top {paddle.Top()} ball position = {ball.GlobalPosition} ball bottom = {ball.Bottom()}"
-                    );
+                    ballVelocity.X = -ballVelocity.X;
                 }
-                else
-                {
-                    GD.Print("KEK collided with middle paddle zone");
-                    ballVelocity.Y = -ballVelocity.Y;
-                    newBallPosition = new Vector2(
-                        newBallPosition.X,
-                        paddle.shape.Top(paddle.GlobalPosition)
-                    );
-                }
-            }
 
-            if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)
-            {
-                ballVelocity.X = -ballVelocity.X;
-            }
-            else if (
-                ball.shape.Right(newBallPosition)
-                >= fieldArea.GlobalPosition.X + fieldArea.rectangleShape.Size.X
-            )
-            {
-                ballVelocity.X = -ballVelocity.X;
-            }
+                ball.GlobalPosition = newBallPosition;
 
-            ball.GlobalPosition = newBallPosition;
-
-            // if (currentPosition != newPosition)
-            // {
-            //     GD.Print($"new paddle position = {paddle.GlobalPosition}");
-            // }
-            // if (currentBallPosition != ball.GlobalPosition)
-            // {
-            //     GD.Print($"new ball position = {ball.GlobalPosition} size = {ball.shape.Radius}");
-            //     GD.Print(
-            //         $"ball top {ball.shape.Top(newBallPosition)} <=  field Y {fieldArea.GlobalPosition.Y} = {ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y}"
-            //     );
-            // }
+                // if (currentPosition != newPosition)
+                // {
+                //     GD.Print($"new paddle position = {paddle.GlobalPosition}");
+                // }
+                // if (currentBallPosition != ball.GlobalPosition)
+                // {
+                //     GD.Print($"new ball position = {ball.GlobalPosition} size = {ball.shape.Radius}");
+                //     GD.Print(
+                //         $"ball top {ball.shape.Top(newBallPosition)} <=  field Y {fieldArea.GlobalPosition.Y} = {ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y}"
+                //     );
+                // }
+            }
         }
     }
 

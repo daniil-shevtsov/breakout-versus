@@ -75,25 +75,26 @@ public partial class GameTest
     [TestCase]
     public async Task TestBallCollidingWithCenterOfPaddle()
     {
+        // paddle size: (95.5, 20) ball radius: 10
         var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
         runner.MaximizeView();
+        runner.SetTimeFactor(0.25);
         var game = (Game)runner.Scene();
-        game.InitGame(new GameConfig(new Vector2(800, 120)));
+        game.isPaused = true;
+        game.InitGame(
+            gameConfig: new GameConfig(
+                fieldSize: new Vector2(800, 320),
+                ballPosition: new Vector2(400, 100),
+                ballDirection: new Vector2(0, 1),
+                paddlePosition: new Vector2(400, 120)
+            )
+        );
         await runner.SimulateFrames(3);
-
-        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 58));
-        AssertObject(game.paddle.GlobalPosition).IsEqual(new Vector2(400, 108));
-
-        runner.SimulateKeyPressed(Key.Space);
-
-        await runner.AwaitPhysicsProcessCalls(6);
-
-        AssertObject(game.ball.TopCenter()).IsEqual(new Vector2(400, 0));
-        AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 10));
-        await runner.AwaitPhysicsProcessCalls(11);
-        AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 93));
+        game.isPaused = false;
         await runner.AwaitPhysicsProcessCalls(1);
-        AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 83));
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 100));
+        await runner.AwaitPhysicsProcessCalls(1);
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 90));
     }
 
     [TestCase]
