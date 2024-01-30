@@ -13,6 +13,7 @@ size = Vector2(1152, 647)
 script = ExtResource("1_fy6tg")
 
 [node name="FieldArea" type="Area2D" parent="."]
+position = Vector2(0, -8)
 script = ExtResource("2_pwf8s")
 
 [node name="ColorRect" type="ColorRect" parent="FieldArea"]

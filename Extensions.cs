@@ -31,9 +31,44 @@ static class MyExtensions
         return ball.shape.Top(ball.GlobalPosition);
     }
 
+    public static float Left(this Ball ball)
+    {
+        return ball.shape.Left(ball.GlobalPosition);
+    }
+
+    public static float Right(this Ball ball)
+    {
+        return ball.shape.Right(ball.GlobalPosition);
+    }
+
     public static float Bottom(this Ball ball)
     {
         return ball.shape.Bottom(ball.GlobalPosition);
+    }
+
+    public static Vector2 Center(this Ball ball)
+    {
+        return ball.GlobalPosition;
+    }
+
+    public static float Top(this Paddle paddle)
+    {
+        return paddle.shape.Top(paddle.GlobalPosition);
+    }
+
+    public static float Left(this Paddle paddle)
+    {
+        return paddle.shape.Left(paddle.GlobalPosition);
+    }
+
+    public static float Right(this Paddle paddle)
+    {
+        return paddle.shape.Right(paddle.GlobalPosition);
+    }
+
+    public static float Bottom(this Paddle paddle)
+    {
+        return paddle.shape.Bottom(paddle.GlobalPosition);
     }
 
     public static Vector2 TopCenter(this Ball ball)

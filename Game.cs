@@ -92,6 +92,16 @@ public partial class Game : Node2D
         );
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         ball.GlobalPosition = new Vector2(paddle.GlobalPosition.X, paddle.GlobalPosition.Y - 50f);
+        if (gameConfig.ballPosition != null && gameConfig.ballDirection != null)
+        {
+            ball.GlobalPosition = (Vector2)gameConfig.ballPosition;
+            ballVelocity = (Vector2)gameConfig.ballDirection;
+            isBallStickedToPaddle = false;
+        }
+        if (gameConfig.paddlePosition != null)
+        {
+            paddle.GlobalPosition = (Vector2)gameConfig.paddlePosition;
+        }
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -137,10 +147,14 @@ public partial class Game : Node2D
             );
             var newBallPosition = ball.GlobalPosition + ballMovement;
 
-            var collidedWithPaddle =
+            var oldCollidedWithPaddle =
                 (ball.shape.Left(newBallPosition) >= paddle.shape.Left(paddle.GlobalPosition))
                 && (ball.shape.Right(newBallPosition) <= paddle.shape.Right(paddle.GlobalPosition))
                 && (ball.shape.Top(newBallPosition) >= paddle.shape.Top(paddle.GlobalPosition));
+            var newCollidedWithPaddle =
+                ball.Left() >= paddle.Left() && ball.Left() <= paddle.Right();
+
+            var collidedWithPaddle = oldCollidedWithPaddle; //|| newCollidedWithPaddle;
 
             if (
                 ball.shape.Bottom(newBallPosition)
@@ -225,7 +239,7 @@ public partial class Game : Node2D
                 isBallStickedToPaddle = false;
                 var minAngle = -120;
                 var maxAngle = -45;
-                var randomAngle = -90; // Random().NextDouble() * (maxAngle - minAngle) + minAngle;
+                var randomAngle = new Random().NextDouble() * (maxAngle - minAngle) + minAngle;
 
                 var angle = Mathf.DegToRad(randomAngle);
                 ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));

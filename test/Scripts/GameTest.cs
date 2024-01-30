@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using GdUnit4;
-using GdUnit4.Core;
 using System.Threading.Tasks;
 using static GdUnit4.Assertions;
 
@@ -95,5 +94,22 @@ public partial class GameTest
         AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 93));
         await runner.AwaitPhysicsProcessCalls(1);
         AssertObject(game.ball.BottomCenter()).IsEqual(new Vector2(400, 83));
+    }
+
+    [TestCase]
+    public async Task TestBallCollidingWithRightPaddleEdge()
+    {
+        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
+        runner.MaximizeView();
+        var game = (Game)runner.Scene();
+        game.InitGame(
+            new GameConfig(
+                new Vector2(800, 320),
+                new Vector2(400, 144),
+                new Vector2(0, 1),
+                new Vector2(400, 139)
+            )
+        );
+        await runner.AwaitMillis(5000);
     }
 }
