@@ -209,7 +209,7 @@ public partial class Game : Node2D
                         );
                         newBallPosition = new Vector2(
                             newBallPosition.X,
-                            paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius / 2f
+                            paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius
                         );
                         GD.Print($"KEK New ball velocity = {ballVelocity}");
                         GD.Print(

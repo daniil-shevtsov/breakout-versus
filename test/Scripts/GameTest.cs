@@ -77,8 +77,6 @@ public partial class GameTest
     {
         // paddle size: (95.5, 20) ball radius: 10
         var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
-        runner.MaximizeView();
-        runner.SetTimeFactor(0.25);
         var game = (Game)runner.Scene();
         game.isPaused = true;
         game.InitGame(
@@ -100,18 +98,25 @@ public partial class GameTest
     [TestCase]
     public async Task TestBallCollidingWithRightPaddleEdge()
     {
+        // paddle size: (95.5, 20) ball radius: 10
         var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
         runner.MaximizeView();
         runner.SetTimeFactor(0.25);
         var game = (Game)runner.Scene();
+        game.isPaused = true;
         game.InitGame(
             new GameConfig(
-                new Vector2(800, 320),
-                new Vector2(400, 144),
-                new Vector2(0, 1),
-                new Vector2(400 - 95.5f / 2 + 4, 250)
+                fieldSize: new Vector2(800, 320),
+                ballPosition: new Vector2(400, 100),
+                ballDirection: new Vector2(0, 1),
+                paddlePosition: new Vector2(400 - 95.5f / 2, 120)
             )
         );
-        await runner.AwaitMillis(5000);
+        await runner.SimulateFrames(3);
+        game.isPaused = false;
+        await runner.AwaitPhysicsProcessCalls(1);
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 100));
+        await runner.AwaitPhysicsProcessCalls(1);
+        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 90));
     }
 }
