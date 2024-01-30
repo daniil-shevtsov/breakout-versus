@@ -117,6 +117,7 @@ public partial class GameTest
         await runner.AwaitPhysicsProcessCalls(1);
         AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 100));
         await runner.AwaitPhysicsProcessCalls(1);
-        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 90));
+        AssertFloat(Mathf.RadToDeg(MathF.Atan2(game.ballVelocity.Y, game.ballVelocity.X)))
+            .IsEqual(-45f);
     }
 }

@@ -11,7 +11,7 @@ public partial class Game : Node2D
 
     private bool isBallStickedToPaddle = true;
     public bool isPaused = false;
-    private Vector2 ballVelocity = Vector2.Zero;
+    public Vector2 ballVelocity = Vector2.Zero;
 
     public int physicsProcessCount = 0;
     public int processCount = 0;
@@ -144,7 +144,7 @@ public partial class Game : Node2D
             }
             else
             {
-                GD.Print($"ball speed: {ballSpeed} delta: {delta}");
+                GD.Print($"KEK ball speed: {ballSpeed} delta: {delta}");
                 var ballMovement = new Vector2(
                     (float)(ballVelocity.X * ballSpeed * delta),
                     (float)(ballVelocity.Y * ballSpeed * delta)
@@ -200,7 +200,7 @@ public partial class Game : Node2D
                     )
                     {
                         GD.Print("KEK collided with right paddle zone");
-                        var randomAngle = -90;
+                        var randomAngle = -45;
 
                         var angle = Mathf.DegToRad(randomAngle);
                         ballVelocity = new Vector2(
