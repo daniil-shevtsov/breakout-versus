@@ -102,6 +102,7 @@ public partial class Game : Node2D
         {
             paddle.GlobalPosition = (Vector2)gameConfig.paddlePosition;
         }
+        GD.Print($"paddle size: {paddle.shape.Size}");
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -152,7 +153,9 @@ public partial class Game : Node2D
                 && (ball.shape.Right(newBallPosition) <= paddle.shape.Right(paddle.GlobalPosition))
                 && (ball.shape.Top(newBallPosition) >= paddle.shape.Top(paddle.GlobalPosition));
             var newCollidedWithPaddle =
-                ball.Left() >= paddle.Left() && ball.Left() <= paddle.Right();
+                ball.Left() >= paddle.Left()
+                && ball.Left() <= paddle.Right()
+                && ball.Bottom() >= paddle.Top();
 
             var collidedWithPaddle = oldCollidedWithPaddle; //|| newCollidedWithPaddle;
 
@@ -171,8 +174,9 @@ public partial class Game : Node2D
                 );
                 ballVelocity.Y = -ballVelocity.Y;
             }
-            else if (collidedWithPaddle)
+            else if (newCollidedWithPaddle)
             {
+                GD.Print("KEK collided with paddle");
                 //TODO: In reality need to use the angle of collision
                 var zoneWidth = paddle.shape.Size.X * 0.33;
                 if (
@@ -180,17 +184,32 @@ public partial class Game : Node2D
                     <= paddle.shape.Left(paddle.GlobalPosition) + zoneWidth
                 )
                 {
-                    ballVelocity.X -= ballSpeed * 0.25f;
+                    GD.Print("KEK collided with left paddle zone");
+                    ballVelocity.Y = -ballVelocity.Y;
+                    //ballVelocity.X -= ballSpeed * 0.25f;
                 }
                 else if (
                     ball.shape.Left(newBallPosition)
                     >= paddle.shape.Right(paddle.GlobalPosition) - zoneWidth
                 )
                 {
-                    ballVelocity.X += ballSpeed * 0.25f;
+                    GD.Print("KEK collided with right paddle zone");
+                    var randomAngle = -90;
+
+                    var angle = Mathf.DegToRad(randomAngle);
+                    ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
+                    newBallPosition = new Vector2(
+                        newBallPosition.X,
+                        paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius / 2f - 1f
+                    );
+                    GD.Print($"KEK New ball velocity = {ballVelocity}");
+                    GD.Print(
+                        $"KEK paddle top {paddle.Top()} ball position = {ball.GlobalPosition} ball bottom = {ball.Bottom()}"
+                    );
                 }
                 else
                 {
+                    GD.Print("KEK collided with middle paddle zone");
                     ballVelocity.Y = -ballVelocity.Y;
                     newBallPosition = new Vector2(
                         newBallPosition.X,
@@ -213,17 +232,17 @@ public partial class Game : Node2D
 
             ball.GlobalPosition = newBallPosition;
 
-            if (currentPosition != newPosition)
-            {
-                GD.Print($"new paddle position = {paddle.GlobalPosition}");
-            }
-            if (currentBallPosition != ball.GlobalPosition)
-            {
-                GD.Print($"new ball position = {ball.GlobalPosition} size = {ball.shape.Radius}");
-                GD.Print(
-                    $"ball top {ball.shape.Top(newBallPosition)} <=  field Y {fieldArea.GlobalPosition.Y} = {ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y}"
-                );
-            }
+            // if (currentPosition != newPosition)
+            // {
+            //     GD.Print($"new paddle position = {paddle.GlobalPosition}");
+            // }
+            // if (currentBallPosition != ball.GlobalPosition)
+            // {
+            //     GD.Print($"new ball position = {ball.GlobalPosition} size = {ball.shape.Radius}");
+            //     GD.Print(
+            //         $"ball top {ball.shape.Top(newBallPosition)} <=  field Y {fieldArea.GlobalPosition.Y} = {ball.shape.Top(newBallPosition) <= fieldArea.GlobalPosition.Y}"
+            //     );
+            // }
         }
     }
 

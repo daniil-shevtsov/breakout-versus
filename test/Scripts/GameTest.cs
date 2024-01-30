@@ -101,13 +101,14 @@ public partial class GameTest
     {
         var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
         runner.MaximizeView();
+        runner.SetTimeFactor(0.25);
         var game = (Game)runner.Scene();
         game.InitGame(
             new GameConfig(
                 new Vector2(800, 320),
                 new Vector2(400, 144),
                 new Vector2(0, 1),
-                new Vector2(400, 139)
+                new Vector2(400 - 95.5f / 2 + 4, 250)
             )
         );
         await runner.AwaitMillis(5000);
