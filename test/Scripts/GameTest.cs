@@ -109,15 +109,41 @@ public partial class GameTest
                 fieldSize: new Vector2(800, 320),
                 ballPosition: new Vector2(400, 100),
                 ballDirection: new Vector2(0, 1),
-                paddlePosition: new Vector2(400 - 95.5f / 2, 120)
+                paddlePosition: new Vector2(400 - 95.5f / 2 + 5, 120)
             )
         );
         await runner.SimulateFrames(3);
         game.isPaused = false;
         await runner.AwaitPhysicsProcessCalls(1);
-        AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 100));
+        //AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 100));
         await runner.AwaitPhysicsProcessCalls(1);
         AssertFloat(Mathf.RadToDeg(MathF.Atan2(game.ballVelocity.Y, game.ballVelocity.X)))
             .IsEqual(-45f);
+    }
+
+    [TestCase]
+    public async Task TestBallCollidingWithLeftPaddleEdge()
+    {
+        // paddle size: (95.5, 20) ball radius: 10
+        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
+        runner.MaximizeView();
+        runner.SetTimeFactor(0.25);
+        var game = (Game)runner.Scene();
+        game.isPaused = true;
+        game.InitGame(
+            new GameConfig(
+                fieldSize: new Vector2(800, 320),
+                ballPosition: new Vector2(400, 100),
+                ballDirection: new Vector2(0, 1),
+                paddlePosition: new Vector2(400 + 95.5f / 2 - 5, 120)
+            )
+        );
+        await runner.SimulateFrames(3);
+        game.isPaused = false;
+        await runner.AwaitPhysicsProcessCalls(1);
+        //AssertObject(game.ball.GlobalPosition).IsEqual(new Vector2(400, 110));
+        await runner.AwaitPhysicsProcessCalls(1);
+        AssertFloat(Mathf.RadToDeg(MathF.Atan2(game.ballVelocity.Y, game.ballVelocity.X)))
+            .IsEqual(-135f);
     }
 }

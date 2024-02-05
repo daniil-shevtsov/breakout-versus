@@ -163,8 +163,6 @@ public partial class Game : Node2D
                     && ball.shape.Left(newBallPosition) <= paddle.Right()
                     && ball.shape.Bottom(newBallPosition) > paddle.Top();
 
-                var collidedWithPaddle = oldCollidedWithPaddle; //|| newCollidedWithPaddle;
-
                 if (
                     ball.shape.Bottom(newBallPosition)
                     >= fieldArea.GlobalPosition.Y + fieldArea.rectangleShape.Size.Y
@@ -190,9 +188,22 @@ public partial class Game : Node2D
                         <= paddle.shape.Left(paddle.GlobalPosition) + zoneWidth
                     )
                     {
-                        GD.Print("KEK collided with left paddle zone");
-                        ballVelocity.Y = -ballVelocity.Y;
-                        //ballVelocity.X -= ballSpeed * 0.25f;
+                        GD.Print("KEK collided with right paddle zone");
+                        var randomAngle = -135;
+
+                        var angle = Mathf.DegToRad(randomAngle);
+                        ballVelocity = new Vector2(
+                            (float)Mathf.Cos(angle),
+                            (float)Mathf.Sin(angle)
+                        );
+                        newBallPosition = new Vector2(
+                            newBallPosition.X,
+                            paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius
+                        );
+                        GD.Print($"KEK New ball velocity = {ballVelocity}");
+                        GD.Print(
+                            $"KEK paddle top {paddle.Top()} ball position = {ball.GlobalPosition} ball bottom = {ball.Bottom()}"
+                        );
                     }
                     else if (
                         ball.shape.Left(newBallPosition)
