@@ -8,6 +8,7 @@ public partial class Game : Node2D
 {
     float paddleSpeed = 700;
     float platformerSpeed = 700;
+    float platformerFallingSpeed = 100;
     float ballSpeed = 600;
     public List<Brick> bricks = new List<Brick>();
 
@@ -158,6 +159,39 @@ public partial class Game : Node2D
                 0f
             );
             var newPlatformerPosition = currentPlatformerPosition + platformerMovement;
+
+            var bricksUnderneath = bricks.FindAll(brick =>
+            {
+                var isBrickToTheRight = brick.center > platformer.center;
+                var intersectionX = 0f;
+                if (isBrickToTheRight)
+                {
+                    intersectionX = platformer.Right() - brick.Left();
+                }
+                else
+                {
+                    intersectionX = platformer.Left() - brick.Right();
+                }
+                return platformer.Bottom() <= brick.Top() && intersectionX >= 0;
+            });
+            var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
+            var isGrounded =
+                groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
+
+            if (!isGrounded)
+            {
+                newPlatformerPosition = new Vector2(
+                    newPlatformerPosition.X,
+                    (float)(newPlatformerPosition.Y + platformerFallingSpeed * delta)
+                );
+            }
+
+            if (groundBrick != null && platformer.Bottom() > groundBrick.Top())
+            {
+                newPlatformerPosition.Y = groundBrick.Top() - platformer.shape.Size.Y / 2;
+                GD.Print($"Set platformer to {newPlatformerPosition.Y}");
+            }
+
             platformer.GlobalPosition = newPlatformerPosition;
 
             if (isBallStickedToPaddle)

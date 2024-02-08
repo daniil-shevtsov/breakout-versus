@@ -66,24 +66,24 @@ static class MyExtensions
         return ball.GlobalPosition;
     }
 
-    public static float Top(this Paddle paddle)
+    public static float Top(this Shaped paddle)
     {
-        return paddle.shape.Top(paddle.GlobalPosition);
+        return paddle.shape.Top(paddle.center);
     }
 
-    public static float Left(this Paddle paddle)
+    public static float Left(this Shaped paddle)
     {
-        return paddle.shape.Left(paddle.GlobalPosition);
+        return paddle.shape.Left(paddle.center);
     }
 
-    public static float Right(this Paddle paddle)
+    public static float Right(this Shaped paddle)
     {
-        return paddle.shape.Right(paddle.GlobalPosition);
+        return paddle.shape.Right(paddle.center);
     }
 
-    public static float Bottom(this Paddle paddle)
+    public static float Bottom(this Shaped paddle)
     {
-        return paddle.shape.Bottom(paddle.GlobalPosition);
+        return paddle.shape.Bottom(paddle.center);
     }
 
     public static Vector2 TopCenter(this Ball ball)

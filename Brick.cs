@@ -1,13 +1,22 @@
 using Godot;
 using System;
 
-public partial class Brick : StaticBody2D
+public partial class Brick : StaticBody2D, Shaped
 {
     public CollisionShape2D collisionShape = null;
     public RectangleShape2D rectangleShape = null;
     public ColorRect colorRect = null;
     public string brickId = "not initialized";
     public bool isEnabled = true;
+
+    public RectangleShape2D shape
+    {
+        get => rectangleShape;
+    }
+    public Vector2 center
+    {
+        get => GlobalPosition;
+    }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
