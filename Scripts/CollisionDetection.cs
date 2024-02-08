@@ -32,6 +32,13 @@ static class MyCollisionDetection
         {
             intersection = new Vector2(circleDiameter, circleDiameter);
         }
+        else if (
+            new Vector2(circleCenter.X - circleRadius / 2, circleCenter.Y - circleRadius / 2)
+            == rectBottomRight
+        )
+        {
+            intersection = new Vector2(circleRadius / 2, circleRadius / 2);
+        }
         return intersection;
     }
 }

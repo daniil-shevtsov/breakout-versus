@@ -54,4 +54,16 @@ public partial class RectangleCircleIntersectionTest
         );
         AssertObject(intersection).IsEqual(new Vector2(12f, 12f));
     }
+
+    [TestCase]
+    public async Task ShouldReturnIntersectionWhenRectangleIntersectsQuarterOfCircle()
+    {
+        var intersection = MyCollisionDetection.Intersection(
+            rectSize: new Vector2(80, 40),
+            rectTopLeft: new Vector2(0, 0),
+            circleRadius: 6f,
+            circleCenter: new Vector2(83, 43)
+        );
+        AssertObject(intersection).IsEqual(new Vector2(3f, 3f));
+    }
 }
