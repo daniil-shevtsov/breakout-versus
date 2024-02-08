@@ -9,6 +9,12 @@ static class MyCollisionDetection
         Vector2 circleCenter
     )
     {
-        return Vector2.Zero;
+        var rectRightBottom = new Vector2(rectTopLeft.X + rectSize.X, rectTopLeft.Y + rectSize.Y);
+        var intersection = Vector2.Zero;
+        if (circleCenter == rectRightBottom)
+        {
+            intersection = new Vector2(circleRadius, circleRadius);
+        }
+        return intersection;
     }
 }

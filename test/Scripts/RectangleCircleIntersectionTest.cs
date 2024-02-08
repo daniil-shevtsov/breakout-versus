@@ -18,4 +18,16 @@ public partial class RectangleCircleIntersectionTest
         );
         AssertObject(intersection).IsEqual(Vector2.Zero);
     }
+
+    [TestCase]
+    public async Task ShouldReturnIntersectionWhenIntersectedBottomRight()
+    {
+        var intersection = MyCollisionDetection.Intersection(
+            rectSize: new Vector2(20, 10),
+            rectTopLeft: new Vector2(0, 0),
+            circleRadius: 6f,
+            circleCenter: new Vector2(20, 10)
+        );
+        AssertObject(intersection).IsEqual(new Vector2(6f, 6f));
+    }
 }
