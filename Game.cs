@@ -18,6 +18,7 @@ public partial class Game : Node2D
     public int processCount = 0;
 
     public Paddle paddle = null;
+    public Platformer platformer = null;
     public Ball ball = null;
     public FieldArea fieldArea = null;
 
@@ -25,6 +26,7 @@ public partial class Game : Node2D
     public override async void _Ready()
     {
         paddle = GetNode<Paddle>("Paddle");
+        platformer = GetNode<Platformer>("Platformer");
         ball = GetNode<Ball>("Ball");
         fieldArea = GetNode<FieldArea>("FieldArea");
 
@@ -53,6 +55,8 @@ public partial class Game : Node2D
         scene.CallDeferred("remove_child", dummyBrick);
         var fieldSize = fieldArea.rectangleShape.Size;
 
+        var brickOffsetY = fieldArea.rectangleShape.Size.Y * 0.25f;
+
         var brickDistanceX = 4f;
         var brickDistanceY = 4f;
         int bricksToFitInRow = (int)Math.Floor(fieldSize.X / (brickDistanceX + brickSize.X));
@@ -65,7 +69,7 @@ public partial class Game : Node2D
         var extraSpace = fieldSize.X - brickRowWidth;
 
         var brickStartX = extraSpace / 2;
-        var brickStartY = brickStartX;
+        var brickStartY = brickOffsetY + brickStartX;
 
         for (int i = 0; i < brickCountY; ++i)
         {
@@ -91,6 +95,10 @@ public partial class Game : Node2D
         paddle.GlobalPosition = new Vector2(
             fieldArea.rectangleShape.Size.X / 2f,
             fieldArea.rectangleShape.Size.Y * 0.9f
+        );
+        platformer.GlobalPosition = new Vector2(
+            fieldArea.rectangleShape.Size.X / 2f,
+            brickStartY - platformer.shape.Size.Y
         );
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         ball.GlobalPosition = new Vector2(paddle.GlobalPosition.X, paddle.GlobalPosition.Y - 50f);

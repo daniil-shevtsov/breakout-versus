@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://cpfh8yk42nsnr"]
+[gd_scene load_steps=8 format=3 uid="uid://cpfh8yk42nsnr"]
 
 [ext_resource type="Script" path="res://Game.cs" id="1_fy6tg"]
 [ext_resource type="PackedScene" uid="uid://ceef1exm7fxc4" path="res://paddle.tscn" id="2_0m1yw"]
 [ext_resource type="Script" path="res://FieldArea.cs" id="2_pwf8s"]
 [ext_resource type="Script" path="res://Paddle.cs" id="3_evw1l"]
 [ext_resource type="PackedScene" uid="uid://djv2g16wb2sx3" path="res://ball.tscn" id="5_fufeb"]
+[ext_resource type="PackedScene" uid="uid://683yshyrdud5" path="res://platformer.tscn" id="6_2vjvo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6tscc"]
 size = Vector2(1152, 647)
@@ -31,3 +32,5 @@ script = ExtResource("3_evw1l")
 
 [node name="Ball" parent="." instance=ExtResource("5_fufeb")]
 position = Vector2(311, -147)
+
+[node name="Platformer" parent="." instance=ExtResource("6_2vjvo")]
