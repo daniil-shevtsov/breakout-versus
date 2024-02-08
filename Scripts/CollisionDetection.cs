@@ -19,10 +19,18 @@ static class MyCollisionDetection
 
         var circleDiameter = circleRadius * 2;
 
+        var realIntersection = new Vector2(
+            Mathf.Abs((rectBottomRight.X) - (circleCenter.X - circleRadius)),
+            Mathf.Abs((rectBottomRight.Y) - (circleCenter.Y - circleRadius))
+        );
+
+        // cx - cr / 2 = rtlx + rsx
+        //
+
         var intersection = Vector2.Zero;
         if (circleCenter == rectBottomRight)
         {
-            intersection = new Vector2(circleRadius, circleRadius);
+            intersection = realIntersection;
         }
         else if (circleCenter == rectBottomCenter)
         {
