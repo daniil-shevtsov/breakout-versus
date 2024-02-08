@@ -30,4 +30,28 @@ public partial class RectangleCircleIntersectionTest
         );
         AssertObject(intersection).IsEqual(new Vector2(6f, 6f));
     }
+
+    [TestCase]
+    public async Task ShouldReturnIntersectionWhenIntersectedBottomCenter()
+    {
+        var intersection = MyCollisionDetection.Intersection(
+            rectSize: new Vector2(20, 10),
+            rectTopLeft: new Vector2(0, 0),
+            circleRadius: 6f,
+            circleCenter: new Vector2(10, 10)
+        );
+        AssertObject(intersection).IsEqual(new Vector2(12f, 6f));
+    }
+
+    [TestCase]
+    public async Task ShouldReturnIntersectionWhenRectangleContainsWholeCircle()
+    {
+        var intersection = MyCollisionDetection.Intersection(
+            rectSize: new Vector2(40, 40),
+            rectTopLeft: new Vector2(0, 0),
+            circleRadius: 6f,
+            circleCenter: new Vector2(20, 20)
+        );
+        AssertObject(intersection).IsEqual(new Vector2(12f, 12f));
+    }
 }

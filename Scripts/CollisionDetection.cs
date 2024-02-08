@@ -9,11 +9,28 @@ static class MyCollisionDetection
         Vector2 circleCenter
     )
     {
-        var rectRightBottom = new Vector2(rectTopLeft.X + rectSize.X, rectTopLeft.Y + rectSize.Y);
+        var rectBottom = rectTopLeft.Y + rectSize.Y;
+        var rectRight = rectTopLeft.X + rectSize.X;
+        var rectCenterX = rectTopLeft.X + rectSize.X / 2;
+        var rectCenterY = rectTopLeft.Y + rectSize.Y / 2;
+        var rectBottomRight = new Vector2(rectRight, rectBottom);
+        var rectBottomCenter = new Vector2(rectCenterX, rectBottom);
+        var rectCenter = new Vector2(rectCenterX, rectCenterY);
+
+        var circleDiameter = circleRadius * 2;
+
         var intersection = Vector2.Zero;
-        if (circleCenter == rectRightBottom)
+        if (circleCenter == rectBottomRight)
         {
             intersection = new Vector2(circleRadius, circleRadius);
+        }
+        else if (circleCenter == rectBottomCenter)
+        {
+            intersection = new Vector2(circleDiameter, circleRadius);
+        }
+        else if (circleCenter == rectCenter)
+        {
+            intersection = new Vector2(circleDiameter, circleDiameter);
         }
         return intersection;
     }
