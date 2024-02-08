@@ -2,15 +2,17 @@ using Godot;
 
 static class MyCollisionDetection
 {
-    public static Vector2 Intersection(
+    public static bool IsIntersection(
         Vector2 rectSize,
         Vector2 rectTopLeft,
         float circleRadius,
         Vector2 circleCenter
     )
     {
+        var rectTop = rectTopLeft.Y;
         var rectBottom = rectTopLeft.Y + rectSize.Y;
         var rectRight = rectTopLeft.X + rectSize.X;
+        var rectLeft = rectTopLeft.X;
         var rectCenterX = rectTopLeft.X + rectSize.X / 2;
         var rectCenterY = rectTopLeft.Y + rectSize.Y / 2;
         var rectBottomRight = new Vector2(rectRight, rectBottom);
@@ -19,34 +21,64 @@ static class MyCollisionDetection
 
         var circleDiameter = circleRadius * 2;
 
-        var realIntersection = new Vector2(
-            Mathf.Abs((rectBottomRight.X) - (circleCenter.X - circleRadius)),
-            Mathf.Abs((rectBottomRight.Y) - (circleCenter.Y - circleRadius))
+        var closestRectanglePointToCircle = new Vector2(
+            Mathf.Clamp(circleCenter.X, rectLeft, rectRight),
+            Mathf.Clamp(circleCenter.Y, rectTop, rectBottom)
         );
+        var distance = new Vector2(
+            circleCenter.X - closestRectanglePointToCircle.X,
+            circleCenter.Y - closestRectanglePointToCircle.Y
+        );
+        var isIntersection =
+            (distance.X * distance.X + distance.Y * distance.Y) <= circleRadius * circleRadius;
 
-        // cx - cr / 2 = rtlx + rsx
-        //
+        return isIntersection;
+    }
+
+    //TODO: Need to calculate correct dx dy of the intersection
+    public static Vector2 Intersection(
+        Vector2 rectSize,
+        Vector2 rectTopLeft,
+        float circleRadius,
+        Vector2 circleCenter
+    )
+    {
+        var rectTop = rectTopLeft.Y;
+        var rectBottom = rectTopLeft.Y + rectSize.Y;
+        var rectRight = rectTopLeft.X + rectSize.X;
+        var rectLeft = rectTopLeft.X;
+        var rectCenterX = rectTopLeft.X + rectSize.X / 2;
+        var rectCenterY = rectTopLeft.Y + rectSize.Y / 2;
+        var rectBottomRight = new Vector2(rectRight, rectBottom);
+        var rectBottomCenter = new Vector2(rectCenterX, rectBottom);
+        var rectCenter = new Vector2(rectCenterX, rectCenterY);
+
+        var circleDiameter = circleRadius * 2;
+
+        var closestRectanglePointToCircle = new Vector2(
+            Mathf.Clamp(circleCenter.X, rectLeft, rectRight),
+            Mathf.Clamp(circleCenter.Y, rectTop, rectBottom)
+        );
+        var distance = new Vector2(
+            circleCenter.X - closestRectanglePointToCircle.X,
+            circleCenter.Y - closestRectanglePointToCircle.Y
+        );
+        var isIntersection =
+            (distance.X * distance.X + distance.Y * distance.Y) <= circleRadius * circleRadius;
 
         var intersection = Vector2.Zero;
-        if (circleCenter == rectBottomRight)
+        GD.Print(
+            $"is intersection: {isIntersection}\nclosest: {closestRectanglePointToCircle}\ndistance: {distance}\n\n"
+        );
+        if (isIntersection)
         {
-            intersection = realIntersection;
+            intersection = Vector2.Zero;
         }
-        else if (circleCenter == rectBottomCenter)
+        else
         {
-            intersection = new Vector2(circleDiameter, circleRadius);
+            intersection = Vector2.Zero;
         }
-        else if (circleCenter == rectCenter)
-        {
-            intersection = new Vector2(circleDiameter, circleDiameter);
-        }
-        else if (
-            new Vector2(circleCenter.X - circleRadius / 2, circleCenter.Y - circleRadius / 2)
-            == rectBottomRight
-        )
-        {
-            intersection = new Vector2(circleRadius / 2, circleRadius / 2);
-        }
+
         return intersection;
     }
 }
