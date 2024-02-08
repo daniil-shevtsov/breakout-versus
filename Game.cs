@@ -9,12 +9,16 @@ public partial class Game : Node2D
     float paddleSpeed = 700;
     float platformerSpeed = 700;
     float platformerFallingSpeed = 100;
+    float jumpSpeed = 300;
     float ballSpeed = 600;
     public List<Brick> bricks = new List<Brick>();
 
     private bool isBallStickedToPaddle = true;
     public bool isPaused = false;
     public Vector2 ballVelocity = Vector2.Zero;
+    public Vector2 platformerVelocity = Vector2.Zero;
+    public Vector2 platformerAcceleration = Vector2.Zero;
+    public bool isGrounded = false;
 
     public int physicsProcessCount = 0;
     public int processCount = 0;
@@ -152,13 +156,7 @@ public partial class Game : Node2D
             {
                 platformerDirection = 1.0f;
             }
-
-            var currentPlatformerPosition = platformer.GlobalPosition;
-            var platformerMovement = new Vector2(
-                (float)(platformerDirection * platformerSpeed * delta),
-                0f
-            );
-            var newPlatformerPosition = currentPlatformerPosition + platformerMovement;
+            platformerVelocity.X = platformerDirection * platformerSpeed * (float)delta;
 
             var bricksUnderneath = bricks.FindAll(brick =>
             {
@@ -172,26 +170,41 @@ public partial class Game : Node2D
                 {
                     intersectionX = platformer.Left() - brick.Right();
                 }
-                return platformer.Bottom() <= brick.Top() && intersectionX >= 0;
+                return platformer.Bottom() <= brick.Bottom() && intersectionX >= 0;
             });
             var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
-            var isGrounded =
-                groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
+            // var isGrounded =
+            //     groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
 
             if (!isGrounded)
             {
-                newPlatformerPosition = new Vector2(
-                    newPlatformerPosition.X,
-                    (float)(newPlatformerPosition.Y + platformerFallingSpeed * delta)
-                );
+                platformerAcceleration.Y = platformerFallingSpeed;
+            }
+            else
+            {
+                GD.Print("GROUNDED");
+                platformerAcceleration.Y = 0;
             }
 
+            if (isGrounded && Input.IsActionPressed("platformer_jump"))
+            {
+                platformerAcceleration.Y = -jumpSpeed;
+            }
+
+            var currentPlatformerPosition = platformer.GlobalPosition;
+            platformerVelocity = platformerVelocity + platformerAcceleration * (float)delta;
+            var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
             if (groundBrick != null && platformer.Bottom() > groundBrick.Top())
             {
                 newPlatformerPosition.Y = groundBrick.Top() - platformer.shape.Size.Y / 2;
+                platformerAcceleration.Y = 0;
                 GD.Print($"Set platformer to {newPlatformerPosition.Y}");
+                isGrounded = true;
             }
 
+            // GD.Print(
+            //     $"new position: {newPlatformerPosition} velocity: {platformerVelocity} acceleration: {platformerAcceleration}"
+            // );
             platformer.GlobalPosition = newPlatformerPosition;
 
             if (isBallStickedToPaddle)
