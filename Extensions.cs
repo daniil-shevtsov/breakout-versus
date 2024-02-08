@@ -6,6 +6,15 @@ using System;
 
 static class MyExtensions
 {
+    public static Vector2 Intersection(
+        this RectangleShape2D rectangle,
+        Vector2 position,
+        float radius
+    )
+    {
+        return Vector2.Zero;
+    }
+
     public static float Left(this RectangleShape2D shape, Vector2 center)
     {
         return center.X - shape.Size.X / 2;
