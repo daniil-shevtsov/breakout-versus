@@ -261,10 +261,11 @@ public partial class Game : Node2D
 
                 foreach (Brick brick in bricks)
                 {
-                    if (brick.Intersects(ball, newBallPosition))
+                    if (brick.isEnabled && brick.Intersects(ball, newBallPosition))
                     {
                         GD.Print($"Collided with brick {brick.TopLeft()}");
                         ballVelocity.Y = -ballVelocity.Y;
+                        brick.Toggle(false);
                         break;
                     }
                 }

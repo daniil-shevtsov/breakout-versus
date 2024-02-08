@@ -7,6 +7,7 @@ public partial class Brick : StaticBody2D
     public RectangleShape2D rectangleShape = null;
     public ColorRect colorRect = null;
     public string brickId = "not initialized";
+    public bool isEnabled = true;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -18,4 +19,17 @@ public partial class Brick : StaticBody2D
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta) { }
+
+    public void Toggle(bool isEnabled)
+    {
+        this.isEnabled = isEnabled;
+        if (isEnabled)
+        {
+            Show();
+        }
+        else
+        {
+            Hide();
+        }
+    }
 }
