@@ -239,13 +239,13 @@ public partial class Game : Node2D
                         // );
                     }
                 }
-                else if (
-                    bricks.Max(brick => brick.rectangleShape.Bottom(brick.GlobalPosition))
-                    >= ball.shape.Top(newBallPosition)
-                )
-                {
-                    ballVelocity.Y = -ballVelocity.Y;
-                }
+                // else if (
+                //     bricks.Max(brick => brick.rectangleShape.Bottom(brick.GlobalPosition))
+                //     >= ball.shape.Top(newBallPosition)
+                // )
+                // {
+                //     ballVelocity.Y = -ballVelocity.Y;
+                // }
 
                 if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)
                 {
@@ -257,6 +257,16 @@ public partial class Game : Node2D
                 )
                 {
                     ballVelocity.X = -ballVelocity.X;
+                }
+
+                foreach (Brick brick in bricks)
+                {
+                    if (brick.Intersects(ball, newBallPosition))
+                    {
+                        GD.Print($"Collided with brick {brick.TopLeft()}");
+                        ballVelocity.Y = -ballVelocity.Y;
+                        break;
+                    }
                 }
 
                 ball.GlobalPosition = newBallPosition;

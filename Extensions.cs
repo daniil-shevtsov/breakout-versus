@@ -6,13 +6,14 @@ using System;
 
 static class MyExtensions
 {
-    public static Vector2 Intersection(
-        this RectangleShape2D rectangle,
-        Vector2 position,
-        float radius
-    )
+    public static bool Intersects(this Brick brick, Ball ball, Vector2 newBallPosition)
     {
-        return Vector2.Zero;
+        return MyCollisionDetection.IsIntersection(
+            rectSize: brick.rectangleShape.Size,
+            rectTopLeft: brick.rectangleShape.TopLeft(brick.GlobalPosition),
+            circleRadius: ball.shape.Radius,
+            circleCenter: newBallPosition
+        );
     }
 
     public static float Left(this RectangleShape2D shape, Vector2 center)
@@ -33,6 +34,11 @@ static class MyExtensions
     public static float Top(this RectangleShape2D shape, Vector2 center)
     {
         return center.Y - shape.Size.Y / 2;
+    }
+
+    public static Vector2 TopLeft(this RectangleShape2D shape, Vector2 center)
+    {
+        return new Vector2(shape.Left(center), shape.Top(center));
     }
 
     public static float Top(this Ball ball)
@@ -108,6 +114,11 @@ static class MyExtensions
     public static float Top(this CircleShape2D shape, Vector2 center)
     {
         return center.Y - shape.Radius / 2;
+    }
+
+    public static Vector2 TopLeft(this Brick brick)
+    {
+        return brick.rectangleShape.TopLeft(brick.GlobalPosition);
     }
 
     public static async Task AwaitPhysicsProcessCalls(this ISceneRunner runner, uint n)
