@@ -7,6 +7,7 @@ using static MyExtensions;
 public partial class Game : Node2D
 {
     float paddleSpeed = 700;
+    float platformerSpeed = 700;
     float ballSpeed = 600;
     public List<Brick> bricks = new List<Brick>();
 
@@ -137,10 +138,27 @@ public partial class Game : Node2D
             }
 
             var currentPosition = paddle.GlobalPosition;
-            var currentBallPosition = ball.GlobalPosition;
             var movement = new Vector2((float)(paddleDirection * paddleSpeed * delta), 0f);
             var newPosition = currentPosition + movement;
             paddle.GlobalPosition = newPosition;
+
+            var platformerDirection = 0f;
+            if (Input.IsActionPressed("platformer_left"))
+            {
+                platformerDirection = -1.0f;
+            }
+            else if (Input.IsActionPressed("platformer_right"))
+            {
+                platformerDirection = 1.0f;
+            }
+
+            var currentPlatformerPosition = platformer.GlobalPosition;
+            var platformerMovement = new Vector2(
+                (float)(platformerDirection * platformerSpeed * delta),
+                0f
+            );
+            var newPlatformerPosition = currentPlatformerPosition + platformerMovement;
+            platformer.GlobalPosition = newPlatformerPosition;
 
             if (isBallStickedToPaddle)
             {
