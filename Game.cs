@@ -9,7 +9,7 @@ public partial class Game : Node2D
     float paddleSpeed = 700;
     float platformerSpeed = 700;
     float platformerFallingSpeed = 100;
-    float jumpSpeed = 300;
+    float jumpSpeed = 600;
     float ballSpeed = 600;
     public List<Brick> bricks = new List<Brick>();
 
@@ -158,6 +158,16 @@ public partial class Game : Node2D
             }
             platformerVelocity.X = platformerDirection * platformerSpeed * (float)delta;
 
+            if (isGrounded && Input.IsActionPressed("platformer_jump"))
+            {
+                platformerVelocity.Y = -jumpSpeed * (float)delta;
+            }
+
+            var currentPlatformerPosition = platformer.GlobalPosition;
+            platformerVelocity = platformerVelocity + platformerAcceleration * (float)delta;
+            GD.Print($"velocity = {platformerVelocity} acceleration = {platformerAcceleration}");
+            var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
+            platformer.GlobalPosition = newPlatformerPosition;
             var bricksUnderneath = bricks.FindAll(brick =>
             {
                 var isBrickToTheRight = brick.center > platformer.center;
@@ -170,9 +180,13 @@ public partial class Game : Node2D
                 {
                     intersectionX = platformer.Left() - brick.Right();
                 }
-                return platformer.Bottom() <= brick.Bottom() && intersectionX >= 0;
+
+                return brick.isEnabled
+                    && platformer.Bottom() <= brick.Bottom()
+                    && intersectionX >= 0;
             });
             var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
+            GD.Print($"ground brick: {groundBrick.center}");
             // var isGrounded =
             //     groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
 
@@ -185,21 +199,16 @@ public partial class Game : Node2D
                 GD.Print("GROUNDED");
                 platformerAcceleration.Y = 0;
             }
-
-            if (isGrounded && Input.IsActionPressed("platformer_jump"))
-            {
-                platformerAcceleration.Y = -jumpSpeed;
-            }
-
-            var currentPlatformerPosition = platformer.GlobalPosition;
-            platformerVelocity = platformerVelocity + platformerAcceleration * (float)delta;
-            var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
             if (groundBrick != null && platformer.Bottom() > groundBrick.Top())
             {
                 newPlatformerPosition.Y = groundBrick.Top() - platformer.shape.Size.Y / 2;
                 platformerAcceleration.Y = 0;
                 GD.Print($"Set platformer to {newPlatformerPosition.Y}");
                 isGrounded = true;
+            }
+            else
+            {
+                isGrounded = false;
             }
 
             // GD.Print(
@@ -365,6 +374,26 @@ public partial class Game : Node2D
                 var angle = Mathf.DegToRad(randomAngle);
                 ballVelocity = new Vector2((float)Mathf.Cos(angle), (float)Mathf.Sin(angle));
                 GD.Print($"new ball velocity {ballVelocity}");
+            }
+        }
+
+        if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.IsReleased())
+        {
+            var position = eventMouseButton.Position;
+            GD.Print("Mouse Click/Unclick at: ", position);
+            var clickedBrick = bricks.Find(
+                brick =>
+                    MyCollisionDetection.IsIntersection(
+                        rectSize: brick.rectangleShape.Size,
+                        rectTopLeft: brick.rectangleShape.TopLeft(brick.GlobalPosition),
+                        circleRadius: 1f,
+                        circleCenter: position
+                    )
+            );
+            if (clickedBrick != null)
+            {
+                GD.Print($"Toggle brick {clickedBrick.center}");
+                clickedBrick.Toggle(!clickedBrick.isEnabled);
             }
         }
     }
