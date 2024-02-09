@@ -163,58 +163,7 @@ public partial class Game : Node2D
                 platformerVelocity.Y = -jumpSpeed * (float)delta;
             }
 
-            var currentPlatformerPosition = platformer.GlobalPosition;
-            platformerVelocity = platformerVelocity + platformerAcceleration * (float)delta;
-            GD.Print($"velocity = {platformerVelocity} acceleration = {platformerAcceleration}");
-            var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
-            platformer.GlobalPosition = newPlatformerPosition;
-            var bricksUnderneath = bricks.FindAll(brick =>
-            {
-                var isBrickToTheRight = brick.center > platformer.center;
-                var intersectionX = 0f;
-                if (isBrickToTheRight)
-                {
-                    intersectionX = platformer.Right() - brick.Left();
-                }
-                else
-                {
-                    intersectionX = platformer.Left() - brick.Right();
-                }
-
-                return brick.isEnabled
-                    && platformer.Bottom() <= brick.Bottom()
-                    && intersectionX >= 0;
-            });
-            var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
-            GD.Print($"ground brick: {groundBrick.center}");
-            // var isGrounded =
-            //     groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
-
-            if (!isGrounded)
-            {
-                platformerAcceleration.Y = platformerFallingSpeed;
-            }
-            else
-            {
-                GD.Print("GROUNDED");
-                platformerAcceleration.Y = 0;
-            }
-            if (groundBrick != null && platformer.Bottom() > groundBrick.Top())
-            {
-                newPlatformerPosition.Y = groundBrick.Top() - platformer.shape.Size.Y / 2;
-                platformerAcceleration.Y = 0;
-                GD.Print($"Set platformer to {newPlatformerPosition.Y}");
-                isGrounded = true;
-            }
-            else
-            {
-                isGrounded = false;
-            }
-
-            // GD.Print(
-            //     $"new position: {newPlatformerPosition} velocity: {platformerVelocity} acceleration: {platformerAcceleration}"
-            // );
-            platformer.GlobalPosition = newPlatformerPosition;
+            resolvePlatformerCollision(delta);
 
             if (isBallStickedToPaddle)
             {
@@ -396,5 +345,70 @@ public partial class Game : Node2D
                 clickedBrick.Toggle(!clickedBrick.isEnabled);
             }
         }
+    }
+
+    public void resolvePlatformerCollision(double delta)
+    {
+        var currentPlatformerPosition = platformer.GlobalPosition;
+        platformerVelocity = platformerVelocity + platformerAcceleration * (float)delta;
+        GD.Print($"velocity = {platformerVelocity} acceleration = {platformerAcceleration}");
+        var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
+        platformer.GlobalPosition = newPlatformerPosition;
+        var bricksUnderneath = bricks.FindAll(brick =>
+        {
+            var isBrickToTheRight = brick.center > platformer.center;
+            var intersectionX = 0f;
+            if (isBrickToTheRight)
+            {
+                intersectionX = platformer.Right() - brick.Left();
+            }
+            else
+            {
+                intersectionX = platformer.Left() - brick.Right();
+            }
+
+            return brick.isEnabled && platformer.Bottom() <= brick.Bottom() && intersectionX >= 0;
+        });
+        var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
+        GD.Print($"ground brick: {groundBrick.center}");
+        // var isGrounded =
+        //     groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
+
+        if (!isGrounded)
+        {
+            platformerAcceleration.Y = platformerFallingSpeed;
+        }
+        else
+        {
+            GD.Print("GROUNDED");
+            platformerAcceleration.Y = 0;
+        }
+        if (groundBrick != null)
+        {
+            GD.Print(
+                $"center={platformer.center.Y} size={platformer.shape.Size.Y} top={platformer.Top()} bottom={platformer.Bottom}"
+            );
+            GD.Print($"player bottom: {platformer.Bottom()} groundBrick top: {groundBrick.Top()}");
+        }
+        if (groundBrick != null && platformer.Bottom() > groundBrick.Top())
+        {
+            newPlatformerPosition.Y = groundBrick.Top() - platformer.shape.Size.Y / 2;
+            platformerAcceleration.Y = 0;
+            GD.Print($"Set platformer to {newPlatformerPosition.Y}");
+            isGrounded = true;
+        }
+        else if (groundBrick != null && (groundBrick.Top() - platformer.Bottom()) > 0.001)
+        {
+            isGrounded = false;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+        // GD.Print(
+        //     $"new position: {newPlatformerPosition} velocity: {platformerVelocity} acceleration: {platformerAcceleration}"
+        // );
+        platformer.GlobalPosition = newPlatformerPosition;
     }
 }
