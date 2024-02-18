@@ -76,7 +76,7 @@ public partial class Game : Node2D
 
         var brickStartX = extraSpace / 2;
         var brickStartY = brickOffsetY + brickStartX;
-
+        GD.Print($"Want to draw {brickCountX} * {brickCountY} bricks KEK");
         for (int i = 0; i < brickCountY; ++i)
         {
             for (int j = 0; j < brickCountX; ++j)
@@ -84,6 +84,7 @@ public partial class Game : Node2D
                 var brick = (Brick)brickResource.Instantiate();
                 scene.CallDeferred("add_child", brick);
                 bricks.Add(brick);
+                // brick.colorRect.Size = brick.shape.Size;
 
                 brick.brickId = $"brick-({j},[i])";
                 var brickPositionTopLeft = new Vector2(
@@ -95,6 +96,7 @@ public partial class Game : Node2D
                     brickPositionTopLeft.Y + brickSize.Y / 2f
                 );
                 brick.GlobalPosition = brickPositionCenter;
+                GD.Print(brick.center);
             }
         }
 
@@ -386,7 +388,7 @@ public partial class Game : Node2D
         if (groundBrick != null)
         {
             GD.Print(
-                $"center={platformer.center.Y} size={platformer.shape.Size.Y} top={platformer.Top()} bottom={platformer.Bottom}"
+                $"center={platformer.center.Y} size={platformer.shape.Size.Y} top={platformer.Top()} bottom={platformer.Bottom()}"
             );
             GD.Print($"player bottom: {platformer.Bottom()} groundBrick top: {groundBrick.Top()}");
         }
