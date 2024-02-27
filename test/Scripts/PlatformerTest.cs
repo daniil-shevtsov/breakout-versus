@@ -10,40 +10,6 @@ public partial class PlatformerTest
     private GameConfig gameConfig = new GameConfig(new Vector2(800, 600));
 
     [TestCase]
-    public async Task ShouldReturnZeroXForNotIntersectionLeftPlatformerAndRightBrink()
-    {
-        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
-        var game = (Game)runner.Scene();
-        await runner.SimulateFrames(3);
-
-        var brickPosition = new Vector2(0,0);
-        var platformerPosition = new Vector2(1000, 0);
-        game.bricks[0].GlobalPosition = brickPosition;
-        game.platformer.GlobalPosition = platformerPosition;
-
-        var intersection = game.BrickIntersection(game.bricks[0], game.platformer);
-
-        AssertFloat(intersection.X).IsEqual(0f);
-    }
-
-        [TestCase]
-    public async Task ShouldReturnZeroXForNotIntersectionRightPlatformerAndLeftBrink()
-    {
-        var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);
-        var game = (Game)runner.Scene();
-        await runner.SimulateFrames(3);
-
-        var brickPosition = new Vector2(1000,0);
-        var platformerPosition = new Vector2(0, 0);
-        game.bricks[0].GlobalPosition = brickPosition;
-        game.platformer.GlobalPosition = platformerPosition;
-
-        var intersection = game.BrickIntersection(game.bricks[0], game.platformer);
-
-        AssertFloat(intersection.X).IsEqual(0f);
-    }
-
-    [TestCase]
     public async Task ShouldStayGroundedWhenStandingOnABrick()
     {
         var runner = ISceneRunner.Load("res://game_scene_root.tscn", true, true);

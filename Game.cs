@@ -349,7 +349,7 @@ public partial class Game : Node2D
 		}
 	}
 
-	public Vector2 BrickIntersection(Brick brick, Platformer platformer) {
+	public Vector2 BrickIntersection(Shaped brick, Shaped platformer) {
 		return Vector2.Zero;
 	}
 
