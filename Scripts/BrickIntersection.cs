@@ -1,18 +1,35 @@
+using System;
 using Godot;
 
 static class MyIntersection
 {
     public static Vector2 BrickIntersection(Shaped brick, Shaped platformer)
     {
-        var intersectionX = platformer.Right() - brick.Left();
-        if (Mathf.Abs(platformer.center.X - brick.center.X) < 30)
+        var isBrickLeft = brick.center < platformer.center;
+        bool isNotIntersected;
+        if (isBrickLeft)
         {
-            return new Vector2(intersectionX, 0f);
+            isNotIntersected = brick.Right() < platformer.Left();
         }
         else
         {
-            return Vector2.Zero;
+            isNotIntersected = platformer.Right() < brick.Left();
+        }
+        float intersectionX;
+        if (isBrickLeft)
+        {
+            intersectionX = platformer.Left() - brick.Right();
+        }
+        else
+        {
+            intersectionX = platformer.Right() - brick.Left();
         }
 
+        if (isNotIntersected)
+        {
+            intersectionX = 0f;
+        }
+
+        return new Vector2(Mathf.Abs(intersectionX), 0f);
     }
 }

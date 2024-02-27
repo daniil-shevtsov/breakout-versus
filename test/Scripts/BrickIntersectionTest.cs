@@ -10,10 +10,10 @@ public partial class BrickIntersectionTest
     private GameConfig gameConfig = new GameConfig(new Vector2(800, 600));
 
     [TestCase]
-    public async Task ShouldReturnZeroXForNotIntersectionLeftPlatformerAndRightBrick()
+    public async Task ShouldReturnZeroXForNotIntersectionRightBrickAndLeftPlatformer()
     {
-        var brick = new Rect(size: new Vector2(40, 20), center: new Vector2(520, 530));
-        var platformer = new Rect(size: new Vector2(50, 80), center: new Vector2(110, 120));
+        var brick = new Rect(size: new Vector2(4, 2), center: new Vector2(4, 3));
+        var platformer = new Rect(size: new Vector2(4, 6), center: new Vector2(-3, -3));
 
         var intersection = BrickIntersection(brick, platformer);
 
@@ -21,10 +21,10 @@ public partial class BrickIntersectionTest
     }
 
     [TestCase]
-    public async Task ShouldReturnZeroXForNotIntersectionRightPlatformerAndLeftBrick()
+    public async Task ShouldReturnZeroXForNotIntersectionLeftBrickAndRightPlatformer()
     {
-        var brick = new Rect(size: new Vector2(40, 20), center: new Vector2(520, 530));
-        var platformer = new Rect(size: new Vector2(50, 80), center: new Vector2(110, 120));
+        var brick = new Rect(size: new Vector2(4, 2), center: new Vector2(-3, -3));
+        var platformer = new Rect(size: new Vector2(4, 6), center: new Vector2(3, -3));
 
         var intersection = BrickIntersection(brick, platformer);
 
@@ -32,9 +32,20 @@ public partial class BrickIntersectionTest
     }
 
     [TestCase]
-    public async Task ShouldReturnXForIntersectionLeftPlatformerAndRightBrick()
+    public async Task ShouldReturnXForIntersectionRightBrickAndLeftPlatformer()
     {
         var brick = new Rect(size: new Vector2(4, 2), center: new Vector2(2, 0));
+        var platformer = new Rect(size: new Vector2(4, 6), center: new Vector2(0, 0));
+
+        var intersection = BrickIntersection(brick, platformer);
+
+        AssertFloat(intersection.X).IsEqual(2f);
+    }
+
+    [TestCase]
+    public async Task ShouldReturnXForIntersectionLeftBrickAndRightPlatformer()
+    {
+        var brick = new Rect(size: new Vector2(4, 2), center: new Vector2(-2, 0));
         var platformer = new Rect(size: new Vector2(4, 6), center: new Vector2(0, 0));
 
         var intersection = BrickIntersection(brick, platformer);
