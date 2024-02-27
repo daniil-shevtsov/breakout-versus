@@ -349,10 +349,6 @@ public partial class Game : Node2D
 		}
 	}
 
-	public Vector2 BrickIntersection(Shaped brick, Shaped platformer) {
-		return Vector2.Zero;
-	}
-
 	public void resolvePlatformerCollision(double delta)
 	{
 		var currentPlatformerPosition = platformer.GlobalPosition;
@@ -360,26 +356,39 @@ public partial class Game : Node2D
 		// GD.Print($"velocity = {platformerVelocity} acceleration = {platformerAcceleration}");
 		var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
 		platformer.GlobalPosition = newPlatformerPosition;
-		var bricksUnderneath = bricks.FindAll(brick =>
-		{
-			var isBrickToTheRight = brick.center > platformer.center;
-			var intersectionX = 0f;
-			if (isBrickToTheRight)
-			{
-				intersectionX = platformer.Right() - brick.Left();
-			}
-			else
-			{
-				intersectionX = platformer.Left() - brick.Right();
-			}
 
-			var brickEnabled = brick.isEnabled;
-			return brickEnabled && platformer.Bottom() <= brick.Top() && intersectionX >= 0;
-		});
-		var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
-		GD.Print($"ground brick: {groundBrick.center}");
-		// var isGrounded =
-		//     groundBrick != null && ((groundBrick.Top() - platformer.Bottom()) < 0.0001);
+
+		// var bricksUnderneath = bricks.FindAll(brick =>
+		// {
+		// 	var isBrickToTheRight = brick.center > platformer.center;
+		// 	var intersectionX = 0f;
+		// 	if (isBrickToTheRight)
+		// 	{
+		// 		intersectionX = platformer.Right() - brick.Left();
+		// 	}
+		// 	else
+		// 	{
+		// 		intersectionX = platformer.Left() - brick.Right();
+		// 	}
+
+		// 	var brickEnabled = brick.isEnabled;
+		// 	return brickEnabled && platformer.Bottom() <= brick.Top() && intersectionX >= 0;
+		// });
+		var intersectedBrick = bricks.Find(brick => brick.isEnabled && MyIntersection.BrickIntersection(brick, platformer) != Vector2.Zero);
+		Vector2 intersection;
+		if (intersectedBrick != null)
+		{
+			intersection = MyIntersection.BrickIntersection(intersectedBrick, platformer);
+			GD.Print("KEK Intersection = {intersection}");
+
+		}
+		else
+		{
+			intersection = Vector2.Zero;
+		}
+
+		var groundBrick = intersectedBrick;//bricksUnderneath.MinBy(brick => brick.center.Y);
+		var isGrounded = groundBrick != null;
 
 		if (!isGrounded)
 		{
