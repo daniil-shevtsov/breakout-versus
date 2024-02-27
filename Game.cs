@@ -331,7 +331,7 @@ public partial class Game : Node2D
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.IsReleased())
 		{
 			var position = eventMouseButton.Position;
-			GD.Print("Mouse Click/Unclick at: ", position);
+			GD.Print("MOUSE Mouse Click/Unclick at: ", position);
 			var clickedBrick = bricks.Find(
 				brick =>
 					MyCollisionDetection.IsIntersection(
@@ -343,17 +343,21 @@ public partial class Game : Node2D
 			);
 			if (clickedBrick != null)
 			{
-				GD.Print($"Toggle brick {clickedBrick.center}");
+				GD.Print($"MOUSE Toggle brick {clickedBrick.center}");
 				clickedBrick.Toggle(!clickedBrick.isEnabled);
 			}
 		}
+	}
+
+	public Vector2 BrickIntersection(Brick brick, Platformer platformer) {
+		return Vector2.Zero;
 	}
 
 	public void resolvePlatformerCollision(double delta)
 	{
 		var currentPlatformerPosition = platformer.GlobalPosition;
 		platformerVelocity = platformerVelocity + platformerAcceleration * (float)delta;
-		GD.Print($"velocity = {platformerVelocity} acceleration = {platformerAcceleration}");
+		// GD.Print($"velocity = {platformerVelocity} acceleration = {platformerAcceleration}");
 		var newPlatformerPosition = currentPlatformerPosition + platformerVelocity;
 		platformer.GlobalPosition = newPlatformerPosition;
 		var bricksUnderneath = bricks.FindAll(brick =>
@@ -369,7 +373,8 @@ public partial class Game : Node2D
 				intersectionX = platformer.Left() - brick.Right();
 			}
 
-			return brick.isEnabled && platformer.Bottom() <= brick.Bottom() && intersectionX >= 0;
+			var brickEnabled = brick.isEnabled;
+			return brickEnabled && platformer.Bottom() <= brick.Top() && intersectionX >= 0;
 		});
 		var groundBrick = bricksUnderneath.MinBy(brick => brick.center.Y);
 		GD.Print($"ground brick: {groundBrick.center}");
@@ -378,6 +383,7 @@ public partial class Game : Node2D
 
 		if (!isGrounded)
 		{
+			GD.Print("Not grounded, so set falling velocity");
 			platformerAcceleration.Y = platformerFallingSpeed;
 		}
 		else
@@ -401,10 +407,12 @@ public partial class Game : Node2D
 		}
 		else if (groundBrick != null && (groundBrick.Top() - platformer.Bottom()) > 0.001)
 		{
+			GD.Print($"ground brick top: {groundBrick.Top()} and player bottom: {platformer.Bottom()} so set grounded to false");
 			isGrounded = false;
 		}
 		else
 		{
+			GD.Print($"else so set grounded to false");
 			isGrounded = false;
 		}
 
