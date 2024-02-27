@@ -358,7 +358,6 @@ public partial class Game : Node2D
 
 		var intersectedBrick = bricks.Find(brick => brick.isEnabled && MyIntersection.BrickIntersection(brick, platformer) != Vector2.Zero);
 		var groundBrick = intersectedBrick;
-		var isGrounded = groundBrick != null;
 		Vector2 intersection;
 		if (intersectedBrick != null)
 		{
@@ -372,6 +371,7 @@ public partial class Game : Node2D
 		else
 		{
 			intersection = Vector2.Zero;
+			isGrounded = false;
 		}
 
 
