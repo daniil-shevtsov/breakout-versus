@@ -76,6 +76,29 @@ public partial class BrickIntersectionTest
         AssertFloat(intersection.X).IsEqual(2f);
     }
 
+    [TestCase]
+    public async Task ShouldReturnXForIntersectionPlatofrmerContaingBrickEqually()
+    {
+        var brick = new Rect(size: new Vector2(4, 2), center: new Vector2(0, 0));
+        var platformer = new Rect(size: new Vector2(4, 6), center: new Vector2(0, 0));
+
+
+        var intersection = BrickIntersection(brick, platformer);
+
+        AssertFloat(intersection.X).IsEqual(4f);
+    }
+
+    [TestCase]
+    public async Task ShouldReturnZeroXWhenIntersectingXButNotYBrickBelow()
+    {
+        var brick = new Rect(size: new Vector2(4, 2), center: new Vector2(0, 5));
+        var platformer = new Rect(size: new Vector2(4, 6), center: new Vector2(0, 0));
+
+        var intersection = BrickIntersection(brick, platformer);
+
+        AssertFloat(intersection.X).IsEqual(0f);
+    }
+
     class Rect : Shaped
     {
 

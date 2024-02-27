@@ -8,38 +8,40 @@ static class MyIntersection
         var isBrickLeft = brick.center < platformer.center;
         var isBrickInsidePlatformer = brick.Left() > platformer.Left() && brick.Right() < platformer.Right();
         var isPlatformerInsideBrick = platformer.Left() > brick.Left() && platformer.Right() < brick.Right();
-        bool isNotIntersected;
-        if (isBrickLeft)
+
+        bool noOverlap = brick.Left() > platformer.Right() ||
+                            platformer.Left() > brick.Right() ||
+                            brick.Top() > platformer.Bottom() ||
+                            platformer.Top() > brick.Bottom();
+
+        if (!noOverlap)
         {
-            isNotIntersected = brick.Right() < platformer.Left();
+            float intersectionX;
+            if (isBrickLeft)
+            {
+                intersectionX = platformer.Left() - brick.Right();
+            }
+            else
+            {
+                intersectionX = platformer.Right() - brick.Left();
+            }
+
+            if (isBrickInsidePlatformer)
+            {
+                intersectionX = brick.shape.Size.X;
+            }
+            else if (isPlatformerInsideBrick)
+            {
+                intersectionX = platformer.shape.Size.X;
+            }
+
+            return new Vector2(Mathf.Abs(intersectionX), 0f);
         }
         else
         {
-            isNotIntersected = platformer.Right() < brick.Left();
-        }
-        float intersectionX;
-        if (isBrickLeft)
-        {
-            intersectionX = platformer.Left() - brick.Right();
-        }
-        else
-        {
-            intersectionX = platformer.Right() - brick.Left();
+            return Vector2.Zero;
         }
 
-        if (isNotIntersected)
-        {
-            intersectionX = 0f;
-        }
-        else if (isBrickInsidePlatformer)
-        {
-            intersectionX = brick.shape.Size.X;
-        }
-        else if (isPlatformerInsideBrick)
-        {
-            intersectionX = platformer.shape.Size.X;
-        }
 
-        return new Vector2(Mathf.Abs(intersectionX), 0f);
     }
 }
