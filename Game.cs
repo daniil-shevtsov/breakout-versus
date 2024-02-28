@@ -28,6 +28,8 @@ public partial class Game : Node2D
 	public Ball ball = null;
 	public FieldArea fieldArea = null;
 
+	private PackedScene brickResource = null;
+
 	// Called when the node enters the scene tree for the first time.
 	public override async void _Ready()
 	{
@@ -36,14 +38,20 @@ public partial class Game : Node2D
 		ball = GetNode<Ball>("Ball");
 		fieldArea = GetNode<FieldArea>("FieldArea");
 
-		// var gameConfig = new GameConfig(new Vector2(1920, 1080));
-		// InitGame(gameConfig);
-		// await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-		// var gameConfig2 = new GameConfig(new Vector2(800f, 600f));
-		// InitGame(gameConfig2);
-		// await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 		var gameConfig = new GameConfig(new Vector2(800f, 600f));
 		InitGame(gameConfig);
+	}
+
+	public void AddNewBrick(Vector2 position, string id)
+	{
+		var brick = (Brick)brickResource.Instantiate();
+		var scene = GetTree().CurrentScene;
+		scene.CallDeferred("add_child", brick);
+		bricks.Add(brick);
+
+		brick.brickId = id;
+		brick.GlobalPosition = position;
+		GD.Print($"Created {brick.brickId} at ${brick.center}");
 	}
 
 	public async void InitGame(GameConfig gameConfig)
@@ -52,7 +60,7 @@ public partial class Game : Node2D
 		fieldArea.colorRect.Size = gameConfig.fieldSize;
 		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 		var scene = GetTree().CurrentScene;
-		var brickResource = GD.Load<PackedScene>("res://brick.tscn");
+		brickResource = GD.Load<PackedScene>("res://brick.tscn");
 
 		var dummyBrick = (Brick)brickResource.Instantiate();
 		scene.CallDeferred("add_child", dummyBrick);
@@ -81,12 +89,7 @@ public partial class Game : Node2D
 		{
 			for (int j = 0; j < brickCountX; ++j)
 			{
-				var brick = (Brick)brickResource.Instantiate();
-				scene.CallDeferred("add_child", brick);
-				bricks.Add(brick);
-				// brick.colorRect.Size = brick.shape.Size;
-
-				brick.brickId = $"brick-({j},[i])";
+				var brickId = $"brick-({j},{i})";
 				var brickPositionTopLeft = new Vector2(
 					brickStartX + j * brickDistanceX + j * brickSize.X,
 					brickStartY + i * brickDistanceY + i * brickSize.Y
@@ -95,8 +98,7 @@ public partial class Game : Node2D
 					brickPositionTopLeft.X + brickSize.X / 2f,
 					brickPositionTopLeft.Y + brickSize.Y / 2f
 				);
-				brick.GlobalPosition = brickPositionCenter;
-				GD.Print(brick.center);
+				AddNewBrick(brickPositionCenter, brickId);
 			}
 		}
 
@@ -255,30 +257,8 @@ public partial class Game : Node2D
 					{
 						GD.Print("KEK collided with middle paddle zone");
 						ballVelocity.Y = -ballVelocity.Y;
-						// var newAngle = -90;
-
-						// var angle = Mathf.DegToRad(newAngle);
-						// ballVelocity = new Vector2(
-						//     (float)Mathf.Cos(angle),
-						//     (float)Mathf.Sin(angle)
-						// );
-						// newBallPosition = new Vector2(
-						//     newBallPosition.X,
-						//     paddle.shape.Top(paddle.GlobalPosition) - ball.shape.Radius
-						// );
-						// GD.Print($"KEK New ball velocity = {ballVelocity}");
-						// GD.Print(
-						//     $"KEK paddle top {paddle.Top()} ball position = {ball.GlobalPosition} ball bottom = {ball.Bottom()}"
-						// );
 					}
 				}
-				// else if (
-				//     bricks.Max(brick => brick.rectangleShape.Bottom(brick.GlobalPosition))
-				//     >= ball.shape.Top(newBallPosition)
-				// )
-				// {
-				//     ballVelocity.Y = -ballVelocity.Y;
-				// }
 
 				if (ball.shape.Left(newBallPosition) <= fieldArea.GlobalPosition.X)
 				{
@@ -312,11 +292,9 @@ public partial class Game : Node2D
 	{
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
 		{
-			if (keyEvent.Keycode == Key.Space)
+			if (keyEvent.Keycode == Key.Space && isBallStickedToPaddle)
 			{
 				GD.Print("Shoot ball pressed");
-				//physicsProcessCount = 0;
-				//processCount = 0;
 				isBallStickedToPaddle = false;
 				var minAngle = -120;
 				var maxAngle = -45;
@@ -345,6 +323,10 @@ public partial class Game : Node2D
 			{
 				GD.Print($"MOUSE Toggle brick {clickedBrick.center}");
 				clickedBrick.Toggle(!clickedBrick.isEnabled);
+			}
+			else
+			{
+				AddNewBrick(position, $"user-brick-{position}");
 			}
 		}
 	}
@@ -375,12 +357,12 @@ public partial class Game : Node2D
 		}
 
 
-		if (!isGrounded)
+		if (!isGrounded && platformerAcceleration.Y != platformerFallingSpeed)
 		{
 			GD.Print("Not grounded, so set falling velocity");
 			platformerAcceleration.Y = platformerFallingSpeed;
 		}
-		else
+		else if (isGrounded)
 		{
 			GD.Print("GROUNDED");
 			platformerAcceleration.Y = 0;
