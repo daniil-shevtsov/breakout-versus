@@ -70,13 +70,15 @@ public partial class Game : Node2D
 		var fieldSize = fieldArea.rectangleShape.Size;
 
 		var brickOffsetY = fieldArea.rectangleShape.Size.Y * 0.25f;
+		var bottomNoBrickZone = fieldArea.rectangleShape.Size.Y * 0.15f;
 
 		var brickDistanceX = 4f;
 		var brickDistanceY = 4f;
 		int bricksToFitInRow = (int)Math.Floor(fieldSize.X / (brickDistanceX + brickSize.X));
+		int bricksToFitInColumn = (int)Math.Floor((fieldSize.Y - brickOffsetY - bottomNoBrickZone) / (brickDistanceY + brickSize.Y));
 
 		var brickCountX = bricksToFitInRow;
-		var brickCountY = 4;
+		var brickCountY = bricksToFitInColumn - 2;
 
 		var brickRowWidth =
 			bricksToFitInRow * brickSize.X + (bricksToFitInRow - 1) * brickDistanceX;
